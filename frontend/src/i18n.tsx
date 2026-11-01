@@ -56,7 +56,7 @@ const it = {
   h4: 'Token FUEL', h4d: 'Il contratto usa quel prezzo per vendere e ricomprare i token.',
   h5: 'Questa pagina', h5d: 'Legge prezzo e saldo e ti fa provare, con soldi finti.',
   tutorial: 'Vai al tutorial completo',
-  footer: 'Prof. Giuseppe Bosi · Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche',
+  footer: 'Prof. Giuseppe Bosi · Dottore in Ingegneria Elettronica · Professore di Scienze e Tecnologie Informatiche',
   lang: 'EN',
 }
 
@@ -112,7 +112,7 @@ const en: typeof it = {
   h4: 'FUEL token', h4d: 'The contract uses that price to sell and buy back tokens.',
   h5: 'This page', h5d: 'Reads price and balance and lets you try it with play money.',
   tutorial: 'Go to the full tutorial',
-  footer: 'Prof. Giuseppe Bosi · Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche',
+  footer: 'Prof. Giuseppe Bosi · Master\'s-level degree in Electronic Engineering (5-year Italian Laurea, EQF level 7) · Teacher of Computer Science and Technology',
   lang: 'IT',
 }
 
