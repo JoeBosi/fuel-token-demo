@@ -1,0 +1,292 @@
+import { useState, type ReactNode } from 'react'
+import { useAccount, useBalance, usePublicClient, useReadContract, useWriteContract } from 'wagmi'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { getAbiItem, formatUnits, type Abi, type AbiEvent, type Address } from 'viem'
+import { useHistory, usePrice } from '../api'
+import { useNetworkActions } from '../components/network'
+import { useToast } from '../components/Toasts'
+import { addressesFor, fuelTokenAbi } from '../contracts/addresses'
+import { explorerTx, targetChain, TARGET_CHAIN_ID } from '../config'
+import { Wallet } from '../components/Wallet'
+import { useI18n } from '../i18n'
+import { formatEur, formatFuel, formatUnitsFixed, fuelValueEur, parseAmount, TOKEN_DECIMALS } from '../lib/price'
+
+const abi = fuelTokenAbi as unknown as Abi
+
+function Card({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
+  return (
+    <section className={`rounded-xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
+      <h2 className="mb-3 text-lg font-bold">{title}</h2>
+      {children}
+    </section>
+  )
+}
+const Big = ({ children }: { children: ReactNode }) => <p className="text-3xl font-extrabold tabular-nums">{children}</p>
+
+function PriceCard() {
+  const { t, locale } = useI18n()
+  const q = usePrice()
+  const d = q.data
+  return (
+    <Card title={t('priceToday')}>
+      {q.isLoading && <p>{t('loading')}</p>}
+      {q.isError && <p className="text-red-700">{t('error')}: {(q.error as Error).message} <button className="underline" onClick={() => q.refetch()}>{t('retry')}</button></p>}
+      {d && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div><p className="text-sm text-slate-500">{t('fuelPerLitre')}</p><Big>{formatEur(d.fuel_eur, locale, 3)}</Big></div>
+            <div><p className="text-sm text-slate-500">{t('polPrice')}</p><Big>{formatEur(d.pol_eur, locale, 4)}</Big></div>
+          </div>
+          <p className="text-sm text-slate-700">{t('date')}: <b>{d.date}</b> · {d.n_stations} {t('stationsN')}</p>
+          <p className="text-sm text-slate-700">{t('source')}: {t('sourceValue')}</p>
+          <p className="text-sm text-slate-700">
+            {t('onchain')}:{' '}
+            {d.oracle ? (
+              <>
+                {t('updatedAt')} {new Date(d.oracle.updatedAt * 1000).toLocaleString(locale)}{' '}
+                <span className={`rounded px-2 py-0.5 text-xs font-semibold ${d.oracle.fresh ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>{d.oracle.fresh ? t('fresh') : t('stale')}</span>
+              </>
+            ) : t('noOracle')}
+          </p>
+          {d.tx_hash && explorerTx(d.tx_hash) && (
+            <a className="text-sm font-semibold text-amber-700 underline" href={explorerTx(d.tx_hash)!} target="_blank" rel="noreferrer">{t('oracleTx')}</a>
+          )}
+        </div>
+      )}
+    </Card>
+  )
+}
+
+function ChartCard() {
+  const { t, locale } = useI18n()
+  const q = useHistory(365)
+  const [mode, setMode] = useState<'fuel' | 'token'>('fuel')
+  const [showPol, setShowPol] = useState(false)
+  const rows = q.data ?? []
+  return (
+    <Card title={t('chart')} className="md:col-span-2">
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+        {(['fuel', 'token'] as const).map((m) => (
+          <button key={m} onClick={() => setMode(m)} className={`rounded-full px-3 py-1 ${mode === m ? 'bg-amber-500 font-semibold text-white' : 'border border-slate-300 text-slate-700'}`}>
+            {m === 'fuel' ? t('chartFuel') : t('chartToken')}
+          </button>
+        ))}
+        <label className="ml-2 flex items-center gap-1"><input type="checkbox" checked={showPol} onChange={(e) => setShowPol(e.target.checked)} /> {t('chartPol')}</label>
+      </div>
+      {q.isLoading && <p>{t('loading')}</p>}
+      {q.isError && <p className="text-red-700">{t('error')}: {(q.error as Error).message}</p>}
+      {q.data && rows.length === 0 && <p className="text-slate-600">{t('chartEmpty')}</p>}
+      {rows.length > 0 && (
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={rows} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="date" tick={{ fontSize: 11 }} minTickGap={30} />
+              <YAxis yAxisId="l" tick={{ fontSize: 11 }} domain={[(min: number) => Math.max(0, Math.floor((min - 0.2) * 10) / 10), (max: number) => Math.ceil((max + 0.2) * 10) / 10]} width={48} tickFormatter={(v: number) => v.toFixed(2)} />
+              {showPol && <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 11 }} domain={['auto', 'auto']} width={48} tickFormatter={(v: number) => v.toFixed(3)} />}
+              <Tooltip formatter={(v) => formatEur(Number(v), locale, 3)} />
+              <Legend />
+              <Line yAxisId="l" type="monotone" dataKey="fuel_eur" name={mode === 'fuel' ? t('chartFuel') : t('chartToken')} stroke="#d97706" strokeWidth={2} dot={rows.length < 40} />
+              {showPol && <Line yAxisId="r" type="monotone" dataKey="pol_eur" name={t('chartPol')} stroke="#4f46e5" strokeWidth={2} dot={rows.length < 40} />}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+      {mode === 'token' && <p className="mt-2 text-sm text-slate-600">{t('chartHint')}</p>}
+    </Card>
+  )
+}
+
+function useTokenReads() {
+  const { address } = useAccount()
+  const addrs = addressesFor(TARGET_CHAIN_ID)
+  const token = addrs?.token
+  const bal = useReadContract({ address: token, abi, functionName: 'balanceOf', args: address ? [address] : undefined, chainId: TARGET_CHAIN_ID, query: { enabled: !!token && !!address } })
+  const reserve = useReadContract({ address: token, abi, functionName: 'reserve', chainId: TARGET_CHAIN_ID, query: { enabled: !!token } })
+  const pol = useBalance({ address, chainId: TARGET_CHAIN_ID, query: { enabled: !!address } })
+  return { token, address, fuelBalance: bal.data as bigint | undefined, reserve: reserve.data as bigint | undefined, polBalance: pol.data?.value, bal }
+}
+
+function WalletCard() {
+  const { t, locale } = useI18n()
+  const { address, fuelBalance, polBalance, token } = useTokenReads()
+  const price = usePrice()
+  return (
+    <Card title={t('wallet')}>
+      {!address ? <p className="text-slate-600">{t('walletLocked')}</p> : !token ? <p className="text-slate-600">{t('notDeployed')}</p> : (
+        <div className="grid grid-cols-2 gap-4">
+          <div><p className="text-sm text-slate-500">{t('balanceFuel')}</p><Big>{fuelBalance === undefined ? '...' : formatFuel(fuelBalance, locale)}</Big></div>
+          <div><p className="text-sm text-slate-500">{t('valueEur')}</p><Big>{fuelBalance === undefined || !price.data ? '...' : formatEur(fuelValueEur(fuelBalance, price.data.fuel_eur), locale)}</Big></div>
+          <div className="col-span-2"><p className="text-sm text-slate-500">{t('balancePol')}</p><Big>{polBalance === undefined ? '...' : `${formatUnitsFixed(polBalance, 18, 4)} POL`}</Big></div>
+        </div>
+      )}
+    </Card>
+  )
+}
+
+function useTrade() {
+  const { t } = useI18n()
+  const toast = useToast()
+  const qc = useQueryClient()
+  const { writeContractAsync, isPending } = useWriteContract()
+  const client = usePublicClient({ chainId: TARGET_CHAIN_ID })
+  const run = async (functionName: 'buy' | 'sell', token: Address, args: readonly unknown[], value?: bigint) => {
+    try {
+      const hash = await writeContractAsync({ address: token, abi, functionName, args, value, chainId: TARGET_CHAIN_ID })
+      toast('info', t('txPending'), explorerTx(hash))
+      const receipt = await client!.waitForTransactionReceipt({ hash })
+      if (receipt.status === 'success') toast('success', t('txConfirmed'), explorerTx(hash))
+      else toast('error', t('txFailed'), explorerTx(hash))
+      await qc.invalidateQueries()
+    } catch (e) {
+      const m = e as { name?: string; shortMessage?: string }
+      toast('error', m.name === 'UserRejectedRequestError' ? t('txRejected') : `${t('txFailed')}: ${m.shortMessage ?? (e as Error).message}`)
+    }
+  }
+  return { run, isPending }
+}
+
+function useGate() {
+  const { t } = useI18n()
+  const { isConnected } = useAccount()
+  const { wrong } = useNetworkActions()
+  const token = addressesFor(TARGET_CHAIN_ID)?.token
+  const blocked = !isConnected ? t('needWallet') : wrong ? t('needNetwork') : !token ? t('notDeployed') : null
+  return { blocked, token }
+}
+
+function BuyCard() {
+  const { t, locale } = useI18n()
+  const { run, isPending } = useTrade()
+  const { blocked, token } = useGate()
+  const { polBalance } = useTokenReads()
+  const [text, setText] = useState('')
+  const amount = parseAmount(text, TOKEN_DECIMALS)
+  const quote = useReadContract({ address: token, abi, functionName: 'quoteBuy', args: amount ? [amount] : undefined, chainId: TARGET_CHAIN_ID, query: { enabled: !!token && !!amount } })
+  const tooMuch = amount !== null && polBalance !== undefined && amount > polBalance
+  const err = text && !amount ? t('invalidAmount') : tooMuch ? t('insufficientBalance') : null
+  return (
+    <Card title={t('buy')}>
+      <label className="block text-sm text-slate-600">{t('buyInput')}
+        <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="0.1" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-lg" />
+      </label>
+      <p className="mt-3 text-sm text-slate-600">{t('buyPreview')}</p>
+      <Big>{quote.data !== undefined ? `${formatFuel(quote.data as bigint, locale)} FUEL` : '-'}</Big>
+      {quote.isError && <p className="mt-1 text-sm text-red-700">{quote.error.message.split('\n')[0]}</p>}
+      {err && <p className="mt-1 text-sm text-red-700">{err}</p>}
+      <button className="mt-4 w-full rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={!!blocked || !amount || !!err || isPending} title={blocked ?? undefined}
+        onClick={() => token && amount && run('buy', token, [], amount)}>{blocked ?? t('buyButton')}</button>
+    </Card>
+  )
+}
+
+function SellCard() {
+  const { t } = useI18n()
+  const { run, isPending } = useTrade()
+  const { blocked, token } = useGate()
+  const { fuelBalance, reserve } = useTokenReads()
+  const [text, setText] = useState('')
+  const amount = parseAmount(text, TOKEN_DECIMALS)
+  const quote = useReadContract({ address: token, abi, functionName: 'quoteSell', args: amount ? [amount] : undefined, chainId: TARGET_CHAIN_ID, query: { enabled: !!token && !!amount } })
+  const polOut = quote.data as bigint | undefined
+  const lowReserve = polOut !== undefined && reserve !== undefined && polOut > reserve
+  const tooMuch = amount !== null && fuelBalance !== undefined && amount > fuelBalance
+  const err = text && !amount ? t('invalidAmount') : tooMuch ? t('insufficientBalance') : lowReserve ? t('reserveLow') : null
+  return (
+    <Card title={t('sell')}>
+      <label className="block text-sm text-slate-600">{t('sellInput')}
+        <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="1" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-lg" />
+      </label>
+      <p className="mt-3 text-sm text-slate-600">{t('sellPreview')}</p>
+      <Big>{polOut !== undefined ? `${formatUnitsFixed(polOut, 18, 4)} POL` : '-'}</Big>
+      <p className="mt-1 text-sm text-slate-600">{t('reserve')}: {reserve !== undefined ? `${formatUnitsFixed(reserve, 18, 4)} POL` : '-'}</p>
+      {quote.isError && <p className="mt-1 text-sm text-red-700">{quote.error.message.split('\n')[0]}</p>}
+      {err && <p className="mt-1 text-sm text-red-700">{err}</p>}
+      <button className="mt-4 w-full rounded-lg bg-rose-600 px-4 py-3 font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={!!blocked || !amount || !!err || isPending} title={blocked ?? undefined}
+        onClick={() => token && amount && run('sell', token, [amount])}>{blocked ?? t('sellButton')}</button>
+    </Card>
+  )
+}
+
+interface Op { kind: 'buy' | 'sell'; fuel: bigint; pol: bigint; hash: string; block: bigint; idx: number }
+const LOOKBACK = 40_000n
+
+function HistoryCard() {
+  const { t, locale } = useI18n()
+  const { address } = useAccount()
+  const client = usePublicClient({ chainId: TARGET_CHAIN_ID })
+  const token = addressesFor(TARGET_CHAIN_ID)?.token
+  const q = useQuery({
+    queryKey: ['ops', address, token],
+    enabled: !!address && !!token && !!client,
+    queryFn: async (): Promise<Op[]> => {
+      const latest = await client!.getBlockNumber()
+      const fromBlock = latest > LOOKBACK ? latest - LOOKBACK : 0n
+      const bought = getAbiItem({ abi, name: 'Bought' }) as AbiEvent
+      const sold = getAbiItem({ abi, name: 'Sold' }) as AbiEvent
+      const [b, s] = await Promise.all([
+        client!.getLogs({ address: token, event: bought, args: { buyer: address }, fromBlock, toBlock: latest }),
+        client!.getLogs({ address: token, event: sold, args: { seller: address }, fromBlock, toBlock: latest }),
+      ])
+      const ops: Op[] = []
+      for (const l of b as unknown as { args: { polIn: bigint; fuelOut: bigint }; transactionHash: string; blockNumber: bigint; logIndex: number }[])
+        ops.push({ kind: 'buy', fuel: l.args.fuelOut, pol: l.args.polIn, hash: l.transactionHash, block: l.blockNumber, idx: l.logIndex })
+      for (const l of s as unknown as { args: { polOut: bigint; fuelIn: bigint }; transactionHash: string; blockNumber: bigint; logIndex: number }[])
+        ops.push({ kind: 'sell', fuel: l.args.fuelIn, pol: l.args.polOut, hash: l.transactionHash, block: l.blockNumber, idx: l.logIndex })
+      return ops.sort((x, y) => (x.block === y.block ? y.idx - x.idx : x.block > y.block ? -1 : 1)).slice(0, 20)
+    },
+  })
+  return (
+    <Card title={t('history')} className="md:col-span-2">
+      {!address && <p className="text-slate-600">{t('histLocked')}</p>}
+      {address && q.isLoading && <p>{t('loading')}</p>}
+      {q.isError && <p className="text-red-700">{t('error')}: {(q.error as Error).message.split('\n')[0]}</p>}
+      {q.data && q.data.length === 0 && <p className="text-slate-600">{t('histEmpty')} <span className="text-xs">({t('histNote')})</span></p>}
+      {q.data && q.data.length > 0 && (
+        <ul className="divide-y divide-slate-100 text-sm">
+          {q.data.map((o) => (
+            <li key={`${o.hash}-${o.idx}`} className="flex flex-wrap items-center justify-between gap-2 py-2">
+              <span className={`rounded px-2 py-0.5 text-xs font-semibold ${o.kind === 'buy' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>{o.kind === 'buy' ? t('histBought') : t('histSold')}</span>
+              <span className="tabular-nums">{formatFuel(o.fuel, locale)} FUEL {o.kind === 'buy' ? '←' : '→'} {formatUnits(o.pol, 18).slice(0, 8)} POL</span>
+              {explorerTx(o.hash)
+                ? <a className="text-amber-700 underline" href={explorerTx(o.hash)!} target="_blank" rel="noreferrer">Polygonscan</a>
+                : <span className="font-mono text-xs text-slate-500">{o.hash.slice(0, 10)}...</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  )
+}
+
+export default function AppPage() {
+  const { t } = useI18n()
+  const { wrong, switchNetwork } = useNetworkActions()
+  const toast = useToast()
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl font-bold">{t('appName')} <span className="text-base font-normal text-slate-500">· {targetChain.name}</span></h1>
+        <Wallet />
+      </div>
+      {wrong && (
+        <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+          {t('wrongNetwork')}.{' '}
+          <button className="font-semibold underline" onClick={() => switchNetwork().catch(() => toast('error', t('txRejected')))}>{t('switchAmoy')}</button>
+        </div>
+      )}
+      <p className="mb-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">{t('disclaimer')}</p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <PriceCard />
+        <WalletCard />
+        <ChartCard />
+        <BuyCard />
+        <SellCard />
+        <HistoryCard />
+      </div>
+    </div>
+  )
+}

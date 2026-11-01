@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. Il contratto del prezzo · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../en/ch4.html" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" width="24" height="12" aria-hidden="true"><clipPath id="u"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#u)"><path d="M0 0h60v30H0z" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg><span>EN</span></a></div>
+<main>
+<p class="kicker">Capitolo 4 di 9</p><h1>Il contratto del prezzo</h1>
+<div class="goal"><strong>Obiettivo.</strong> Scrivere un oracolo minimo: un numero, una data e una sola persona autorizzata ad aggiornarlo.</div>
+<p>Il nostro oracolo è un contratto che conserva tre cose: il prezzo della benzina, il prezzo del POL e il momento dell'ultimo aggiornamento. Chiunque può <em>leggere</em>; può <em>scrivere</em> solo chi ha un ruolo preciso.</p>
+<div class="box"><strong>Analogia.</strong> È una lavagna in piazza: tutti la vedono, ma il gesso ce l'ha una persona sola. Accanto al prezzo c'è sempre scritta la data.</div>
+<p>Due regole sui numeri. Primo: la blockchain non conosce i decimali, quindi i prezzi sono <strong>interi moltiplicati per un milione</strong>: 1,989 € diventa <code>1989000</code>. Secondo: il momento viene dalla blockchain stessa (<code>block.timestamp</code>), non lo sceglie chi scrive.</p>
+<pre><code>contract FuelPriceOracle is AccessControl {
+    bytes32 public constant UPDATER_ROLE = keccak256(&quot;UPDATER_ROLE&quot;);
+
+    uint256 private _fuelEurPerLitre;
+    uint256 private _polEur;
+    uint64 private _updatedAt;
+    uint64 private _sourceDate;
+
+    constructor(address admin) {
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    }
+
+    function setPrices(uint256 fuelEurPerLitre, uint256 polEur, uint64 sourceDate)
+        external onlyRole(UPDATER_ROLE)
+    {
+        require(fuelEurPerLitre &gt; 0 &amp;&amp; polEur &gt; 0, &quot;zero price&quot;);
+        _fuelEurPerLitre = fuelEurPerLitre;
+        _polEur = polEur;
+        _sourceDate = sourceDate;
+        _updatedAt = uint64(block.timestamp);
+    }
+
+    function fuelPrice() external view returns (uint256, uint64) {
+        return (_fuelEurPerLitre, _updatedAt);
+    }
+}</code></pre>
+<ul><li><code>AccessControl</code> è un modulo di <a href="https://docs.openzeppelin.com/contracts/5.x/access-control">OpenZeppelin</a>: gestisce i ruoli.</li><li><code>UPDATER_ROLE</code> è il nome del ruolo «chi può aggiornare» (un'etichetta ottenuta da un testo).</li><li>Le quattro variabili <code>private</code> sono la lavagna: prezzo benzina, prezzo POL, istante dell'ultimo aggiornamento e data del dato (<code>sourceDate</code>, il giorno a cui si riferiscono i prezzi).</li><li>Il <code>constructor</code> parte una volta sola, al momento della pubblicazione, e dà il ruolo di amministratore a chi pubblica.</li><li><code>setPrices</code> scrive i due prezzi e la data del dato; <code>onlyRole(UPDATER_ROLE)</code> respinge chiunque non abbia il ruolo.</li><li><code>require</code> rifiuta un prezzo uguale a zero, che romperebbe le divisioni del capitolo 6.</li><li><code>block.timestamp</code> è l'ora del blocco in cui la scrittura viene registrata.</li><li><code>fuelPrice</code> è <code>view</code>: si legge gratis, senza firmare nulla.</li></ul>
+<p>Il progetto completo aggiunge la funzione per il prezzo del POL e il controllo di freschezza, che il token userà nei prossimi capitoli, più un evento (<code>PricesUpdated</code>) che registra ogni aggiornamento:</p>
+<pre><code>function polPrice() external view returns (uint256, uint64) {
+    return (_polEur, _updatedAt);
+}
+
+function isFresh(uint64 maxAgeSeconds) external view returns (bool) {
+    return _updatedAt != 0
+        &amp;&amp; block.timestamp &lt;= uint256(_updatedAt) + maxAgeSeconds;
+}</code></pre>
+<ul><li><code>polPrice</code> restituisce il prezzo del POL e l'istante, come <code>fuelPrice</code>.</li><li><code>isFresh</code> risponde «sì» solo se i prezzi esistono (<code>_updatedAt != 0</code>) e non sono più vecchi di <code>maxAgeSeconds</code> secondi.</li></ul>
+<div class="try"><h2>Prova tu</h2><p>Apri il sito Remix (remix.ethereum.org), incolla il contratto con le righe <code>import</code> di OpenZeppelin e la riga <code>pragma solidity ^0.8.24;</code> in testa, compilalo e pubblicalo nell'ambiente di prova di Remix. Poi prova a chiamare <code>setPrices</code> senza avere il ruolo e osserva il rifiuto.</p></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>Un oracolo minimo è una lavagna: valori, data e un solo scrittore autorizzato.</li><li>I prezzi sono interi con sei decimali: 1,989 € è 1989000.</li><li><code>isFresh</code> permette ad altri contratti di rifiutare dati troppo vecchi.</li></ul></div>
+<h2>Per approfondire</h2><ul><li><a href="https://docs.openzeppelin.com/contracts/5.x/access-control">OpenZeppelin: controllo degli accessi</a></li></ul>
+<div class="nav"><a href="ch3.html">&larr; Il portafoglio e la rete di prova</a><a href="ch5.html">Il token con OpenZeppelin &rarr;</a></div>
+</main>
+<footer>Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche</footer>
+</body>
+</html>

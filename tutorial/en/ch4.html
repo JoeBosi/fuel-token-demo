@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4. The price contract · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../it/ch4.html" hreflang="it" lang="it"><svg class="flag" viewBox="0 0 3 2" width="24" height="16" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ce2b37" d="M2 0h1v2H2z"/></svg><span>IT</span></a></div>
+<main>
+<p class="kicker">Chapter 4 of 9</p><h1>The price contract</h1>
+<div class="goal"><strong>Goal.</strong> Write a minimal oracle: one number, one date and a single person allowed to update it.</div>
+<p>Our oracle is a contract that stores three things: the petrol price, the POL price and the time of the last update. Anyone can <em>read</em>; only someone with a specific role can <em>write</em>.</p>
+<div class="box"><strong>Analogy.</strong> It is a blackboard in the square: everyone can see it, but only one person holds the chalk. Next to the price the date is always written.</div>
+<p>Two rules about numbers. First: the blockchain has no decimals, so prices are <strong>integers multiplied by one million</strong>: 1.989 € becomes <code>1989000</code>. Second: the time comes from the blockchain itself (<code>block.timestamp</code>); the writer does not choose it.</p>
+<pre><code>contract FuelPriceOracle is AccessControl {
+    bytes32 public constant UPDATER_ROLE = keccak256(&quot;UPDATER_ROLE&quot;);
+
+    uint256 private _fuelEurPerLitre;
+    uint256 private _polEur;
+    uint64 private _updatedAt;
+    uint64 private _sourceDate;
+
+    constructor(address admin) {
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    }
+
+    function setPrices(uint256 fuelEurPerLitre, uint256 polEur, uint64 sourceDate)
+        external onlyRole(UPDATER_ROLE)
+    {
+        require(fuelEurPerLitre &gt; 0 &amp;&amp; polEur &gt; 0, &quot;zero price&quot;);
+        _fuelEurPerLitre = fuelEurPerLitre;
+        _polEur = polEur;
+        _sourceDate = sourceDate;
+        _updatedAt = uint64(block.timestamp);
+    }
+
+    function fuelPrice() external view returns (uint256, uint64) {
+        return (_fuelEurPerLitre, _updatedAt);
+    }
+}</code></pre>
+<ul><li><code>AccessControl</code> is a module from <a href="https://docs.openzeppelin.com/contracts/5.x/access-control">OpenZeppelin</a>: it manages roles.</li><li><code>UPDATER_ROLE</code> is the name of the "who may update" role (a label derived from a text).</li><li>The four <code>private</code> variables are the blackboard: petrol price, POL price, instant of the last update and the data's date (<code>sourceDate</code>, the day the prices refer to).</li><li>The <code>constructor</code> runs once, at publication, and gives the admin role to whoever publishes.</li><li><code>setPrices</code> writes the two prices and the data's date; <code>onlyRole(UPDATER_ROLE)</code> rejects anyone without the role.</li><li><code>require</code> rejects a price equal to zero, which would break the divisions in chapter 6.</li><li><code>block.timestamp</code> is the time of the block in which the write is recorded.</li><li><code>fuelPrice</code> is <code>view</code>: reading is free and needs no signature.</li></ul>
+<p>The full project adds the function for the POL price and the freshness check, which the token will use in the next chapters, plus an event (<code>PricesUpdated</code>) that records every update:</p>
+<pre><code>function polPrice() external view returns (uint256, uint64) {
+    return (_polEur, _updatedAt);
+}
+
+function isFresh(uint64 maxAgeSeconds) external view returns (bool) {
+    return _updatedAt != 0
+        &amp;&amp; block.timestamp &lt;= uint256(_updatedAt) + maxAgeSeconds;
+}</code></pre>
+<ul><li><code>polPrice</code> returns the POL price and the instant, like <code>fuelPrice</code>.</li><li><code>isFresh</code> answers "yes" only if prices exist (<code>_updatedAt != 0</code>) and are no older than <code>maxAgeSeconds</code> seconds.</li></ul>
+<div class="try"><h2>Try it</h2><p>Open the Remix site (remix.ethereum.org), paste the contract with the OpenZeppelin <code>import</code> lines and <code>pragma solidity ^0.8.24;</code> at the top, compile it and deploy it to Remix's test environment. Then try calling <code>setPrices</code> without the role and watch it get rejected.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>A minimal oracle is a blackboard: values, a date and one authorised writer.</li><li>Prices are integers with six decimals: 1.989 € is 1989000.</li><li><code>isFresh</code> lets other contracts refuse data that is too old.</li></ul></div>
+<h2>Going deeper</h2><ul><li><a href="https://docs.openzeppelin.com/contracts/5.x/access-control">OpenZeppelin: access control</a></li></ul>
+<div class="nav"><a href="ch3.html">&larr; The wallet and the test network</a><a href="ch5.html">The token with OpenZeppelin &rarr;</a></div>
+</main>
+<footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
+</body>
+</html>

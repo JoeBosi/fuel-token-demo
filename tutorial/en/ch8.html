@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8. The web page and MetaMask · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../it/ch8.html" hreflang="it" lang="it"><svg class="flag" viewBox="0 0 3 2" width="24" height="16" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ce2b37" d="M2 0h1v2H2z"/></svg><span>IT</span></a></div>
+<main>
+<p class="kicker">Chapter 8 of 9</p><h1>The web page and MetaMask</h1>
+<div class="goal"><strong>Goal.</strong> Understand how a web page asks the wallet to sign, and why reading and writing differ.</div>
+<p>The web page is the shop window: it shows the price and lets you buy and sell. But it does not hold your key, and must not. When it connects, MetaMask injects into the page an object called <code>window.ethereum</code> through which the page can <em>ask</em>; the last word stays with the wallet.</p>
+<div class="box"><strong>Analogy.</strong> The page is the waiter bringing the bill: it writes down what you want, but you apply the stamp to pay, every time, after reading the amount.</div>
+<h2>Reading and writing</h2>
+<p><strong>Reading</strong> (for example the price or your balance) changes nothing on the blockchain: it is free and needs no signature. <strong>Writing</strong> (buying, selling) changes the state: it needs a signature and a small network fee (in test POL). In Solidity, read functions are marked <code>view</code>.</p>
+<pre><code>import { BrowserProvider, Contract, parseEther } from &quot;ethers&quot;;
+
+const provider = new BrowserProvider(window.ethereum);
+await provider.send(&quot;eth_requestAccounts&quot;, []);
+const signer = await provider.getSigner();
+
+const abi = [
+  &quot;function quoteBuy(uint256 polWei) view returns (uint256)&quot;,
+  &quot;function buy() payable&quot;,
+];
+const token = new Contract(TOKEN_ADDRESS, abi, signer);
+
+const fuel = await token.quoteBuy(parseEther(&quot;1&quot;));
+const tx = await token.buy({ value: parseEther(&quot;1&quot;) });
+await tx.wait();</code></pre>
+<ul><li><code>BrowserProvider</code> connects the library to the wallet in the browser (<code>window.ethereum</code>).</li><li><code>eth_requestAccounts</code> opens the MetaMask window: the user chooses whether to connect.</li><li><code>getSigner</code> is "who signs": the connected account.</li><li><code>abi</code> lists the two functions used; <code>token</code> combines address, list and signer.</li><li><code>quoteBuy</code> is a read: it returns the FUEL you would get, with no signature.</li><li><code>token.buy({ value: ... })</code> is a write: it sends 1 POL (<code>parseEther</code> converts it to units of 10<sup>-18</sup>) and MetaMask asks for confirmation.</li><li><code>tx.wait()</code> waits for the transaction to enter a block.</li></ul>
+<p>The project uses the wagmi and viem libraries, handier in a React app, but the mechanism is the same. The project's page also offers to switch network to Polygon Amoy, and without a wallet it still shows prices and history.</p>
+<div class="try"><h2>Try it</h2><p>Open the browser console (F12) on any page with MetaMask installed and type <code>typeof window.ethereum</code>: if it answers <code>"object"</code>, the page can talk to your wallet.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>The page does not hold your key: it asks, and MetaMask signs after your confirmation.</li><li>Reading is free and needs no signature; writing changes state and needs a signature and a fee.</li><li><code>window.ethereum</code> is the bridge between page and wallet.</li></ul></div>
+<h2>Going deeper</h2><ul><li><a href="https://metamask.io/download">MetaMask: official site</a></li></ul>
+<div class="nav"><a href="ch7.html">&larr; The program that brings the price every morning</a><a href="ch9.html">Putting it all online on the test network &rarr;</a></div>
+</main>
+<footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
+</body>
+</html>

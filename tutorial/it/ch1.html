@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. Perché un oracolo · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../en/ch1.html" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" width="24" height="12" aria-hidden="true"><clipPath id="u"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#u)"><path d="M0 0h60v30H0z" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg><span>EN</span></a></div>
+<main>
+<p class="kicker">Capitolo 1 di 9</p><h1>Perché un oracolo</h1>
+<div class="goal"><strong>Obiettivo.</strong> Capire perché uno smart contract non può leggere internet e come un oracolo risolve il problema.</div>
+<p>Uno <strong>smart contract</strong> è un piccolo programma che vive sulla blockchain. Ha una regola d'oro: tutti i computer della rete devono ottenere <em>lo stesso risultato</em> ogni volta che lo eseguono. Se un contratto potesse chiedere a un sito «quanto costa la benzina adesso?», due computer che chiedono a pochi secondi di distanza potrebbero ricevere due risposte diverse, e la rete non sarebbe più d'accordo su niente.</p>
+<p>Per questo un contratto <strong>non può leggere internet</strong>. Conosce solo ciò che è già scritto sulla blockchain.</p>
+<div class="box"><strong>Analogia.</strong> Pensa a un notaio che si fida solo di ciò che porti sul suo tavolo. Non esce a controllare i prezzi in giro: se vuoi che ne tenga conto, qualcuno deve portargli un foglio e lui lo archivia con la data. Il foglio è il dato, chi lo porta è l'<strong>oracolo</strong>.</div>
+<p>Un oracolo è quindi una persona o un programma che <strong>porta un dato dal mondo esterno e lo scrive sulla blockchain</strong>. Da quel momento qualsiasi contratto può leggerlo, e tutti vedono lo stesso numero. Il punto delicato è la fiducia: chi scrive il dato decide cosa il contratto «crede». Per questo nel nostro progetto un solo indirizzo autorizzato può scrivere, e ogni scrittura lascia una traccia pubblica.</p>
+<p>Esistono anche oracoli decentralizzati, in cui molti nodi indipendenti confermano il dato. Qui usiamo un oracolo semplice e visibile, perfetto per imparare.</p>
+<div class="try"><h2>Prova tu</h2><p>Apri la pagina dei documenti Chainlink sull'argomento (link sotto) e trova con parole tue la risposta a: «perché serve un oracolo?». Poi scrivi su un foglio tre dati del mondo reale che un contratto potrebbe voler conoscere.</p></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>Un contratto non può leggere internet perché tutta la rete deve ottenere lo stesso risultato.</li><li>Un oracolo porta un dato esterno sulla blockchain, dove tutti lo leggono uguale.</li><li>Chi scrive il dato è un punto di fiducia: per questo va limitato e reso visibile.</li></ul></div>
+<h2>Per approfondire</h2><ul><li><a href="https://docs.chain.link/">Chainlink: documentazione sugli oracoli e i dati</a></li></ul>
+<div class="nav"><a href="index.html">&larr; Indice</a><a href="ch2.html">Il dato aperto del Ministero &rarr;</a></div>
+</main>
+<footer>Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche</footer>
+</body>
+</html>

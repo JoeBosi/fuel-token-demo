@@ -1,0 +1,31 @@
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1c2330;font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:#0b5cad}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 16px;font-size:14px;border-bottom:1px solid #e3e7ee;background:#f7f9fc}
+.top a{text-decoration:none;color:#33405a}
+.lang{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.flag{border:1px solid #cfd6e2;vertical-align:middle}
+main{max-width:46rem;margin:0 auto;padding:16px}
+h1{font-size:1.65rem;line-height:1.25;margin:.4em 0}
+h2{font-size:1.2rem;margin:1.6em 0 .4em}
+.kicker{color:#5b6779;font-size:14px;margin:0}
+.goal{background:#eef5fd;border-left:4px solid #0b5cad;padding:10px 14px;margin:12px 0}
+.box{background:#fff8e6;border-left:4px solid #d9a21b;padding:10px 14px;margin:14px 0}
+.try{background:#eefaf0;border-left:4px solid #2e8b4a;padding:10px 14px;margin:18px 0}
+.learned{background:#f3f4f8;border-left:4px solid #6a7590;padding:10px 14px;margin:18px 0}
+.try h2,.learned h2{margin:.1em 0 .3em;font-size:1.05rem}
+pre{background:#f4f6fa;border:1px solid #dde2ec;border-radius:6px;padding:12px;overflow-x:auto;font-size:14px;line-height:1.5}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em;background:#f0f2f7;padding:0 3px;border-radius:3px}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;display:block;overflow-x:auto;font-size:15px}
+th,td{border:1px solid #dde2ec;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#f3f5fa}
+ul,ol{padding-left:1.3em}
+li{margin:.25em 0}
+.nav{display:flex;justify-content:space-between;gap:10px;margin:28px 0 8px;flex-wrap:wrap}
+.nav a{display:inline-block;padding:8px 14px;border:1px solid #cfd6e2;border-radius:6px;text-decoration:none;background:#fff}
+.toc{list-style:none;padding:0}
+.toc li{margin:0;border-bottom:1px solid #e3e7ee}
+.toc a{display:block;padding:10px 4px;text-decoration:none}
+footer{max-width:46rem;margin:24px auto 0;padding:16px;border-top:1px solid #e3e7ee;color:#5b6779;font-size:14px}
+@media(min-width:700px){body{font-size:18px}main{padding:28px 16px}}

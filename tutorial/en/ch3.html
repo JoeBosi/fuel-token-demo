@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3. The wallet and the test network · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../it/ch3.html" hreflang="it" lang="it"><svg class="flag" viewBox="0 0 3 2" width="24" height="16" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ce2b37" d="M2 0h1v2H2z"/></svg><span>IT</span></a></div>
+<main>
+<p class="kicker">Chapter 3 of 9</p><h1>The wallet and the test network</h1>
+<div class="goal"><strong>Goal.</strong> Have MetaMask set up on Polygon Amoy with some test POL.</div>
+<p>To use the blockchain you need a <strong>wallet</strong>: an app that keeps your keys and signs your operations. We will use <strong>MetaMask</strong>, a browser extension.</p>
+<div class="box"><strong>Analogy.</strong> The wallet is a key ring with a personal stamp. Every blockchain operation is a sheet that becomes valid only when you stamp it, and the stamp never leaves the key ring.</div>
+<h2>1. Install MetaMask</h2>
+<p>Download the extension only from the official site (<a href="https://metamask.io/download">metamask.io</a>), create a wallet and write the <strong>recovery phrase</strong> on paper. Whoever knows it controls the wallet: never photograph it or share it.</p>
+<h2>2. Add the Polygon Amoy network</h2>
+<p>A <em>test network</em> (testnet) works like the real one, but its coin is free and worthless. In MetaMask choose "Add a network manually" and enter:</p>
+<table><tr><th>Field</th><th>Value</th></tr>
+<tr><td>Network name</td><td>Polygon Amoy</td></tr>
+<tr><td>RPC URL</td><td>https://polygon-amoy.drpc.org</td></tr>
+<tr><td>Chain ID</td><td>80002</td></tr>
+<tr><td>Currency symbol</td><td>POL</td></tr>
+<tr><td>Block explorer</td><td>https://amoy.polygonscan.com</td></tr></table>
+<p>The <strong>Chain ID</strong> is the number that identifies the network: it makes sure the same signature is not valid on another network. The official settings are in the <a href="https://docs.polygon.technology/">Polygon documentation</a>.</p>
+<h2>3. Get test POL</h2>
+<p>A <strong>faucet</strong> hands out small amounts of test coin. These are the ones we checked as working on 1 November 2026; amounts and rules are those written on their pages and may change.</p>
+<table><tr><th>Faucet</th><th>Amount</th><th>Wait between requests</th><th>Requirements</th></tr>
+<tr><td><a href="https://faucets.chain.link/polygon-amoy">Chainlink</a></td><td>0.5 POL</td><td>not stated</td><td>just connect the wallet</td></tr>
+<tr><td><a href="https://faucet.quicknode.com/polygon/amoy">QuickNode</a></td><td>shown after you enter the address (doubled with a post on X)</td><td>12 hours</td><td>no account, a small balance on the main network, a verification step</td></tr>
+<tr><td><a href="https://www.alchemy.com/faucets/polygon-amoy">Alchemy</a></td><td>0.1 POL</td><td>24 hours</td><td>no account, but at least 0.001 ETH on Ethereum mainnet with some history</td></tr>
+<tr><td><a href="https://getblock.io/faucet/matic-amoy/">GetBlock</a></td><td>0.1 POL</td><td>daily</td><td>GetBlock account and at least 0.005 ETH on Ethereum mainnet</td></tr></table>
+<p>For a brand-new wallet the simplest is Chainlink's, because it only asks you to connect the wallet. The official Polygon faucet (faucet.polygon.technology) did not answer our automated checks: try it from a normal browser if the others are not enough.</p>
+<div class="try"><h2>Try it</h2><p>Install MetaMask, add Polygon Amoy with the values in the table, then ask the Chainlink faucet for POL. When the MetaMask balance shows "POL" with a number above zero, you are done.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>The wallet keeps the keys and signs: the recovery phrase is never shared.</li><li>A test network has a free coin; Amoy has Chain ID 80002 and coin POL.</li><li>A faucet gives a little test coin, with different waits and requirements.</li></ul></div>
+<h2>Going deeper</h2><ul><li><a href="https://metamask.io/download">MetaMask: official site</a></li><li><a href="https://docs.polygon.technology/">Polygon documentation</a></li></ul>
+<div class="nav"><a href="ch2.html">&larr; The Ministry&#x27;s open data</a><a href="ch4.html">The price contract &rarr;</a></div>
+</main>
+<footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
+</body>
+</html>

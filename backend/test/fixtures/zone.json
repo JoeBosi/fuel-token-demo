@@ -1,0 +1,289 @@
+{
+ "success": true,
+ "center": {
+  "lat": 43.446866470946176,
+  "lng": 11.88015682468383
+ },
+ "results": [
+  {
+   "id": 10357,
+   "name": "Stazione di Servizio Tamoil",
+   "fuels": [
+    {
+     "id": 124698656,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": false
+    },
+    {
+     "id": 124694676,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124645907,
+     "price": 2.199,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": false
+    },
+    {
+     "id": 124645906,
+     "price": 2.199,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.46775219780616,
+    "lng": 11.85098648071289
+   },
+   "insertDate": "2026-11-01T21:42:20+01:00",
+   "address": null,
+   "brand": "Tamoil",
+   "distance": "1.9765557090220824"
+  },
+  {
+   "id": 43394,
+   "name": "ESSO AREZZO - SITORNI",
+   "fuels": [
+    {
+     "id": 124689404,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124689405,
+     "price": 2.229,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    },
+    {
+     "id": 124689406,
+     "price": 2.199,
+     "name": "HVO",
+     "fuelId": 408,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.510756653063474,
+    "lng": 11.8712063412376
+   },
+   "insertDate": "2026-11-01T06:32:16+01:00",
+   "address": null,
+   "brand": "Esso",
+   "distance": "5.2516293311991795"
+  },
+  {
+   "id": 61495,
+   "name": "ALA AREZZO POLICIANO",
+   "fuels": [
+    {
+     "id": 124686633,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124657368,
+     "price": 2.239,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.38297628882888,
+    "lng": 11.860865968335478
+   },
+   "insertDate": "2026-10-31T21:50:03+01:00",
+   "address": null,
+   "brand": "Ala",
+   "distance": "9.03533036841098"
+  },
+  {
+   "id": 55806,
+   "name": "TANI GIUSEPPE DI TANI D. & C. S.N.C",
+   "fuels": [
+    {
+     "id": 124668633,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124668635,
+     "price": 2.279,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    },
+    {
+     "id": 124668634,
+     "price": 2.479,
+     "name": "Supreme Diesel",
+     "fuelId": 327,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.41272,
+    "lng": 11.80237
+   },
+   "insertDate": "2026-10-31T07:41:10+01:00",
+   "address": null,
+   "brand": "Esso",
+   "distance": "8.136825088643603"
+  },
+  {
+   "id": 57243,
+   "name": "myOil Arezzo",
+   "fuels": [
+    {
+     "id": 124651165,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124651166,
+     "price": 2.199,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.469478,
+    "lng": 11.85534
+   },
+   "insertDate": "2026-10-30T16:44:21+01:00",
+   "address": null,
+   "brand": "MyOil",
+   "distance": "1.7010538794881853"
+  },
+  {
+   "id": 6593,
+   "name": "AREZZO VIA DANTE - P.V. Q8",
+   "fuels": [
+    {
+     "id": 124569379,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124569380,
+     "price": 2.199,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.44885856272305,
+    "lng": 11.86065208650814
+   },
+   "insertDate": "2026-10-29T01:39:17+01:00",
+   "address": null,
+   "brand": "Q8",
+   "distance": "1.9977079682060552"
+  },
+  {
+   "id": 23558,
+   "name": "AREZZO VIA FIORENTINA 228",
+   "fuels": [
+    {
+     "id": 124569377,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124569378,
+     "price": 2.199,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.47169125089051,
+    "lng": 11.859490716146865
+   },
+   "insertDate": "2026-10-29T01:39:17+01:00",
+   "address": null,
+   "brand": "Q8",
+   "distance": "1.528321782579239"
+  },
+  {
+   "id": 45701,
+   "name": "SHELL AREZZO - V. ANCONETANA",
+   "fuels": [
+    {
+     "id": 124689435,
+     "price": 2.089,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": false
+    },
+    {
+     "id": 124689434,
+     "price": 1.989,
+     "name": "Benzina",
+     "fuelId": 1,
+     "isSelf": true
+    },
+    {
+     "id": 124689437,
+     "price": 2.329,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": false
+    },
+    {
+     "id": 124689436,
+     "price": 2.229,
+     "name": "Gasolio",
+     "fuelId": 2,
+     "isSelf": true
+    },
+    {
+     "id": 124689439,
+     "price": 2.529,
+     "name": "Diesel Shell V Power",
+     "fuelId": 9,
+     "isSelf": false
+    },
+    {
+     "id": 124689438,
+     "price": 2.479,
+     "name": "Diesel Shell V Power",
+     "fuelId": 9,
+     "isSelf": true
+    }
+   ],
+   "location": {
+    "lat": 43.45834181300573,
+    "lng": 11.901006514993828
+   },
+   "insertDate": "2026-11-01T06:33:33+01:00",
+   "address": null,
+   "brand": "Shell",
+   "distance": "2.194486221546552"
+  }
+ ]
+}

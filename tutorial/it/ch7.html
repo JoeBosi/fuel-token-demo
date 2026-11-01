@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7. Il programma che porta il prezzo ogni mattina · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../en/ch7.html" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" width="24" height="12" aria-hidden="true"><clipPath id="u"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#u)"><path d="M0 0h60v30H0z" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg><span>EN</span></a></div>
+<main>
+<p class="kicker">Capitolo 7 di 9</p><h1>Il programma che porta il prezzo ogni mattina</h1>
+<div class="goal"><strong>Obiettivo.</strong> Capire come un programma fuori dalla blockchain legge i prezzi e li scrive nell'oracolo ogni giorno.</div>
+<p>Il contratto non si sveglia da solo: serve qualcuno che, ogni mattina, gli porti il numero. Quel qualcuno è un piccolo programma (il <strong>backend</strong>) che gira su un computer sempre acceso.</p>
+<div class="box"><strong>Analogia.</strong> È il fattorino del giornale: ogni mattina alle 8:30 ritira i prezzi dal Ministero, li controlla e li consegna al notaio (il contratto). Se non li ritira, il foglio sul tavolo resta quello di ieri.</div>
+<p>Il programma fa cinque passi: 1) interroga il Ministero, 2) calcola la mediana, 3) legge il prezzo del POL, 4) salva tutto in un piccolo archivio locale, 5) chiama <code>setPrices</code> sul contratto firmando con la chiave dell'<em>updater</em>, l'unico indirizzo con il ruolo del capitolo 4. Ogni giorno è registrato una volta sola, quindi rilanciarlo non crea doppioni.</p>
+<pre><code>import { Contract, JsonRpcProvider, Wallet } from &quot;ethers&quot;;
+
+function median(values) {
+  const s = [...values].sort((a, b) =&gt; a - b);
+  const m = s.length &gt;&gt; 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+const abi = [&quot;function setPrices(uint256 fuelEurPerLitre, uint256 polEur, uint64 sourceDate)&quot;];
+const provider = new JsonRpcProvider(process.env.RPC_URL);
+const wallet = new Wallet(process.env.UPDATER_PRIVATE_KEY, provider);
+const oracle = new Contract(process.env.ORACLE_ADDRESS, abi, wallet);
+
+const fuelEur = median(pricesOfStations);   // e.g. 1.989
+const polEur = 0.10;                        // from a price service
+const scale = (x) =&gt; BigInt(Math.round(x * 1e6));
+const today = Math.floor(Date.parse(new Date().toISOString().slice(0, 10)) / 1000);
+
+const tx = await oracle.setPrices(scale(fuelEur), scale(polEur), today);
+await tx.wait();</code></pre>
+<ul><li><code>median</code> è la funzione del capitolo 2.</li><li><code>abi</code> è l'elenco delle funzioni che il programma vuole chiamare, scritto come testo.</li><li><code>provider</code> è la porta d'accesso alla rete (l'indirizzo RPC); <code>wallet</code> è l'updater, con la sua chiave privata presa da una variabile d'ambiente, mai scritta nel codice.</li><li><code>oracle</code> unisce indirizzo del contratto, elenco funzioni e wallet firmatario.</li><li><code>scale</code> trasforma 1,989 in 1989000, il formato con sei decimali.</li><li><code>today</code> è la data odierna a mezzanotte UTC in secondi, la <code>sourceDate</code> del dato.</li><li><code>setPrices</code> invia la transazione; <code>tx.wait()</code> aspetta che entri in un blocco.</li></ul>
+<p>Nel progetto il programma parte da solo alle 8:30 (ora di Roma) con un timer. Se la richiesta fallisce, riprova tre volte a dieci minuti l'una dall'altra.</p>
+<h2>Se la fonte non risponde</h2>
+<p>Se il Ministero è irraggiungibile o cambia formato, il programma <strong>non scrive nulla</strong>. Sulla blockchain resta il prezzo di ieri, con la sua data. Dopo 3 giorni, <code>isFresh</code> (capitolo 4) risponde «no» e <code>buy()</code> e <code>sell()</code> si fermano con l'errore «prezzo vecchio». È una scelta voluta: meglio fermarsi che operare su un numero che non rappresenta più la realtà.</p>
+<div class="try"><h2>Prova tu</h2><p>Esegui nel terminale con Node.js la sola funzione <code>median</code> su una lista a tua scelta di 6 numeri (numero pari) e verifica a mano che sia la media dei due centrali.</p></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>Un contratto non agisce da solo: un programma esterno gli porta il dato a orari fissi.</li><li>La chiave dell'updater firma l'aggiornamento e non si scrive mai nel codice.</li><li>Se la fonte manca, il prezzo diventa «vecchio» e le operazioni si fermano da sole.</li></ul></div>
+
+<div class="nav"><a href="ch6.html">&larr; Comprare e vendere</a><a href="ch8.html">La pagina web e MetaMask &rarr;</a></div>
+</main>
+<footer>Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche</footer>
+</body>
+</html>

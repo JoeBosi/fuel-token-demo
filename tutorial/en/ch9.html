@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9. Putting it all online on the test network · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../it/ch9.html" hreflang="it" lang="it"><svg class="flag" viewBox="0 0 3 2" width="24" height="16" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ce2b37" d="M2 0h1v2H2z"/></svg><span>IT</span></a></div>
+<main>
+<p class="kicker">Chapter 9 of 9</p><h1>Putting it all online on the test network</h1>
+<div class="goal"><strong>Goal.</strong> Publish the two contracts on Polygon Amoy, verify them on Polygonscan and check that everything works.</div>
+<p>So far you have worked locally. <strong>Deploying</strong> means sending the compiled code to the network: the contract gets an address and from then on is visible to everyone. You do it with <a href="https://hardhat.org/docs">Hardhat</a>, a development environment for contracts.</p>
+<div class="box"><strong>Analogy.</strong> It is like registering a business with the chamber of commerce: the project stays the same, but it now has an official number anyone can look up.</div>
+<pre><code>// hardhat.config.ts (extract)
+networks: {
+  amoy: {
+    url: &quot;https://polygon-amoy.drpc.org&quot;,
+    chainId: 80002,
+    accounts: [process.env.DEPLOYER_PRIVATE_KEY],
+  },
+},
+
+// scripts/deploy.ts (extract)
+const oracle = await ethers.deployContract(&quot;FuelPriceOracle&quot;, [deployer.address]);
+await oracle.waitForDeployment();
+const token = await ethers.deployContract(&quot;FuelToken&quot;, [await oracle.getAddress()]);
+await token.waitForDeployment();
+await oracle.grantRole(await oracle.UPDATER_ROLE(), UPDATER_ADDRESS);</code></pre>
+<ul><li><code>networks.amoy</code> tells Hardhat where to publish: RPC address and Chain ID 80002.</li><li><code>accounts</code> uses the <em>deployer</em> key taken from the environment: a fresh test key, never a real one.</li><li><code>deployContract</code> publishes the oracle first, then the token, passing it the oracle's address.</li><li>The last line gives the <em>updater</em> address (the chapter 7 program) the role that lets it write prices.</li></ul>
+<h2>Checklist</h2>
+<ol>
+<li>Create two test keys: one to deploy, one to update prices. Never reuse real keys.</li>
+<li>Get test POL for both from the chapter 3 faucets.</li>
+<li>Put the variables in the <code>.env</code> file (never shared or uploaded to GitHub): the deployer key, the updater address, and a Polygonscan API key for step 6.</li>
+<li>Deploy with <code>npx hardhat run scripts/deploy.ts --network amoy</code> and note the two addresses.</li>
+<li>Configure the chapter 7 program with the oracle address and the updater key, then run it once.</li>
+<li><strong>Verify on Polygonscan</strong> (<code>amoy.polygonscan.com</code>): verification publishes the source code next to the contract, so anyone can read what is really running.</li>
+<li>Check: the oracle shows today's prices and date, and <code>isFresh(259200)</code> answers true (259,200 seconds are 3 days).</li>
+<li>Try a purchase of 0.1 POL from the web page and look at the transaction in the explorer.</li>
+</ol>
+<p>If a purchase fails with "old price", the oracle is not fresh: run the chapter 7 program again.</p>
+<p>One last tip: do a full run on Hardhat's local network first (<code>npx hardhat node</code>), where mistakes cost nothing and everything is fast.</p>
+<div class="try"><h2>Try it</h2><p>Deploy only the oracle to Amoy, open its address on Polygonscan and find the "Contract" tab. Then call <code>isFresh</code> from Remix or the explorer: before the first update it must answer false.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>Deploying gives the contracts a public address on the network.</li><li>Test keys live in an <code>.env</code> file that is never shared.</li><li>Verifying on Polygonscan makes the running code readable by everyone.</li></ul></div>
+<h2>Going deeper</h2><ul><li><a href="https://hardhat.org/docs">Hardhat: documentation</a></li><li><a href="https://docs.polygon.technology/">Polygon documentation</a></li></ul>
+<div class="nav"><a href="ch8.html">&larr; The web page and MetaMask</a><a href="faq.html">Frequently asked questions &rarr;</a></div>
+</main>
+<footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
+</body>
+</html>

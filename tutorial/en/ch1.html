@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. Why an oracle · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../it/ch1.html" hreflang="it" lang="it"><svg class="flag" viewBox="0 0 3 2" width="24" height="16" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ce2b37" d="M2 0h1v2H2z"/></svg><span>IT</span></a></div>
+<main>
+<p class="kicker">Chapter 1 of 9</p><h1>Why an oracle</h1>
+<div class="goal"><strong>Goal.</strong> Understand why a smart contract cannot read the internet and how an oracle solves the problem.</div>
+<p>A <strong>smart contract</strong> is a small program that lives on the blockchain. It follows a golden rule: every computer on the network must get <em>the same result</em> each time it runs. If a contract could ask a website "how much is petrol right now?", two computers asking seconds apart might get two different answers, and the network would no longer agree on anything.</p>
+<p>So a contract <strong>cannot read the internet</strong>. It only knows what is already written on the blockchain.</p>
+<div class="box"><strong>Analogy.</strong> Think of a notary who only trusts what you bring to the desk. They do not go out to check prices: if you want them taken into account, someone must bring a sheet, and the notary files it with the date. The sheet is the data; whoever brings it is the <strong>oracle</strong>.</div>
+<p>An oracle is therefore a person or a program that <strong>brings a piece of data from the outside world and writes it on the blockchain</strong>. From then on any contract can read it, and everyone sees the same number. The delicate point is trust: whoever writes the data decides what the contract "believes". That is why in our project a single authorised address can write, and every write leaves a public trace.</p>
+<p>Decentralised oracles also exist, where many independent nodes confirm the data. Here we use a simple, visible oracle, ideal for learning.</p>
+<div class="try"><h2>Try it</h2><p>Open the Chainlink documentation page on the topic (link below) and answer in your own words: "why is an oracle needed?". Then write on paper three real-world facts a contract might want to know.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>A contract cannot read the internet because the whole network must get the same result.</li><li>An oracle brings outside data onto the blockchain, where everyone reads it identically.</li><li>Whoever writes the data is a point of trust, so it must be limited and visible.</li></ul></div>
+<h2>Going deeper</h2><ul><li><a href="https://docs.chain.link/">Chainlink: documentation on oracles and data</a></li></ul>
+<div class="nav"><a href="index.html">&larr; Contents</a><a href="ch2.html">The Ministry&#x27;s open data &rarr;</a></div>
+</main>
+<footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
+</body>
+</html>

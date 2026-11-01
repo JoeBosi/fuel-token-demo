@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8. La pagina web e MetaMask · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../en/ch8.html" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" width="24" height="12" aria-hidden="true"><clipPath id="u"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#u)"><path d="M0 0h60v30H0z" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg><span>EN</span></a></div>
+<main>
+<p class="kicker">Capitolo 8 di 9</p><h1>La pagina web e MetaMask</h1>
+<div class="goal"><strong>Obiettivo.</strong> Capire come una pagina web chiede al portafoglio di firmare e perché leggere e scrivere sono diversi.</div>
+<p>La pagina web è la vetrina: mostra il prezzo, permette di comprare e di vendere. Ma non ha la tua chiave, e non deve averla. Quando si collega, MetaMask inserisce nella pagina un oggetto chiamato <code>window.ethereum</code> con cui la pagina può <em>chiedere</em>; l'ultima parola resta al portafoglio.</p>
+<div class="box"><strong>Analogia.</strong> La pagina è il cameriere che porta il conto: scrive cosa vuoi, ma il timbro per pagare lo metti tu, ogni volta, dopo aver letto la cifra.</div>
+<h2>Leggere e scrivere</h2>
+<p><strong>Leggere</strong> (per esempio il prezzo o il tuo saldo) non cambia nulla sulla blockchain: è gratuito e non serve firmare. <strong>Scrivere</strong> (comprare, vendere) cambia lo stato: serve una firma e si paga una piccola commissione di rete (in POL di prova). In Solidity le funzioni di lettura sono marcate <code>view</code>.</p>
+<pre><code>import { BrowserProvider, Contract, parseEther } from &quot;ethers&quot;;
+
+const provider = new BrowserProvider(window.ethereum);
+await provider.send(&quot;eth_requestAccounts&quot;, []);
+const signer = await provider.getSigner();
+
+const abi = [
+  &quot;function quoteBuy(uint256 polWei) view returns (uint256)&quot;,
+  &quot;function buy() payable&quot;,
+];
+const token = new Contract(TOKEN_ADDRESS, abi, signer);
+
+const fuel = await token.quoteBuy(parseEther(&quot;1&quot;));
+const tx = await token.buy({ value: parseEther(&quot;1&quot;) });
+await tx.wait();</code></pre>
+<ul><li><code>BrowserProvider</code> collega la libreria al portafoglio nel browser (<code>window.ethereum</code>).</li><li><code>eth_requestAccounts</code> fa comparire la finestra di MetaMask: l'utente sceglie se collegarsi.</li><li><code>getSigner</code> è «chi firma»: l'account collegato.</li><li><code>abi</code> elenca le due funzioni usate; <code>token</code> unisce indirizzo, elenco e firmatario.</li><li><code>quoteBuy</code> è una lettura: restituisce i FUEL che otterresti, senza firmare.</li><li><code>token.buy({ value: ... })</code> è una scrittura: invia 1 POL (<code>parseEther</code> lo converte in unità da 10<sup>-18</sup>) e MetaMask chiede conferma.</li><li><code>tx.wait()</code> aspetta che la transazione entri in un blocco.</li></ul>
+<p>Il progetto usa le librerie wagmi e viem, più comode in un'app React, ma il meccanismo è lo stesso. La pagina del progetto si occupa anche di proporre il cambio di rete verso Polygon Amoy, e senza portafoglio mostra comunque prezzi e storico.</p>
+<div class="try"><h2>Prova tu</h2><p>Apri la console del browser (F12) su una pagina qualsiasi con MetaMask installato e scrivi <code>typeof window.ethereum</code>: se risponde <code>"object"</code>, la pagina può parlare con il tuo portafoglio.</p></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>La pagina non ha la tua chiave: chiede, e MetaMask firma dopo la tua conferma.</li><li>Leggere è gratis e non serve firmare; scrivere cambia lo stato e richiede firma e commissione.</li><li><code>window.ethereum</code> è il ponte tra pagina e portafoglio.</li></ul></div>
+<h2>Per approfondire</h2><ul><li><a href="https://metamask.io/download">MetaMask: sito ufficiale</a></li></ul>
+<div class="nav"><a href="ch7.html">&larr; Il programma che porta il prezzo ogni mattina</a><a href="ch9.html">Mettiamo tutto online sulla rete di prova &rarr;</a></div>
+</main>
+<footer>Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche</footer>
+</body>
+</html>

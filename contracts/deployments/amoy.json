@@ -1,0 +1,9 @@
+{
+  "chainId": 80002,
+  "oracle": "0xf30D07696476e97103730BE0dFb55045945409D8",
+  "token": "0x87eAE9eF4A2dD56D04b4798bA9Bc7B777E70c9ac",
+  "deployer": "0xb61709aC6C81ea4B6909B71C3D1Bbb24dbE9C3C2",
+  "updater": "0x9C8B17CD30E463a72AcDCCF2aa9B42Ae3c1eE65d",
+  "blockNumber": 51746048,
+  "timestamp": 1793568625
+}

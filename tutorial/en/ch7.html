@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7. The program that brings the price every morning · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../it/ch7.html" hreflang="it" lang="it"><svg class="flag" viewBox="0 0 3 2" width="24" height="16" aria-hidden="true"><path fill="#009246" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#ce2b37" d="M2 0h1v2H2z"/></svg><span>IT</span></a></div>
+<main>
+<p class="kicker">Chapter 7 of 9</p><h1>The program that brings the price every morning</h1>
+<div class="goal"><strong>Goal.</strong> Understand how a program outside the blockchain reads the prices and writes them to the oracle every day.</div>
+<p>The contract does not wake up by itself: someone must bring it the number every morning. That someone is a small program (the <strong>backend</strong>) running on an always-on computer.</p>
+<div class="box"><strong>Analogy.</strong> It is the newspaper courier: every morning at 8:30 it collects the prices from the Ministry, checks them and delivers them to the notary (the contract). If it does not collect them, the sheet on the desk stays yesterday's.</div>
+<p>The program takes five steps: 1) query the Ministry, 2) compute the median, 3) read the POL price, 4) save everything in a small local archive, 5) call <code>setPrices</code> on the contract, signing with the <em>updater</em> key, the only address with the role from chapter 4. Each day is recorded once, so running it again creates no duplicates.</p>
+<pre><code>import { Contract, JsonRpcProvider, Wallet } from &quot;ethers&quot;;
+
+function median(values) {
+  const s = [...values].sort((a, b) =&gt; a - b);
+  const m = s.length &gt;&gt; 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+const abi = [&quot;function setPrices(uint256 fuelEurPerLitre, uint256 polEur, uint64 sourceDate)&quot;];
+const provider = new JsonRpcProvider(process.env.RPC_URL);
+const wallet = new Wallet(process.env.UPDATER_PRIVATE_KEY, provider);
+const oracle = new Contract(process.env.ORACLE_ADDRESS, abi, wallet);
+
+const fuelEur = median(pricesOfStations);   // e.g. 1.989
+const polEur = 0.10;                        // from a price service
+const scale = (x) =&gt; BigInt(Math.round(x * 1e6));
+const today = Math.floor(Date.parse(new Date().toISOString().slice(0, 10)) / 1000);
+
+const tx = await oracle.setPrices(scale(fuelEur), scale(polEur), today);
+await tx.wait();</code></pre>
+<ul><li><code>median</code> is the function from chapter 2.</li><li><code>abi</code> is the list of functions the program wants to call, written as text.</li><li><code>provider</code> is the doorway to the network (the RPC address); <code>wallet</code> is the updater, with its private key taken from an environment variable, never written in the code.</li><li><code>oracle</code> combines the contract address, the function list and the signing wallet.</li><li><code>scale</code> turns 1.989 into 1989000, the six-decimal format.</li><li><code>today</code> is today's date at midnight UTC in seconds, the data's <code>sourceDate</code>.</li><li><code>setPrices</code> sends the transaction; <code>tx.wait()</code> waits for it to enter a block.</li></ul>
+<p>In the project the program starts by itself at 8:30 (Rome time) with a timer. If the request fails, it retries three times, ten minutes apart.</p>
+<h2>If the source is down</h2>
+<p>If the Ministry is unreachable or changes format, the program <strong>writes nothing</strong>. The blockchain keeps yesterday's price, with its date. After 3 days <code>isFresh</code> (chapter 4) answers "no" and <code>buy()</code> and <code>sell()</code> stop with an "old price" error. This is deliberate: better to stop than to operate on a number that no longer reflects reality.</p>
+<div class="try"><h2>Try it</h2><p>Run only the <code>median</code> function with Node.js on a list of 6 numbers of your choice (an even count) and check by hand that it is the average of the two middle ones.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>A contract does not act by itself: an outside program brings it the data at set times.</li><li>The updater key signs the update and is never written in the code.</li><li>If the source is missing, the price becomes "old" and operations stop on their own.</li></ul></div>
+
+<div class="nav"><a href="ch6.html">&larr; Buying and selling</a><a href="ch8.html">The web page and MetaMask &rarr;</a></div>
+</main>
+<footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
+</body>
+</html>
