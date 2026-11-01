@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { useAccount, useBalance, usePublicClient, useReadContract, useWriteContract } from 'wagmi'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { formatDate, formatDateTime } from '../lib/date'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { getAbiItem, formatUnits, type Abi, type AbiEvent, type Address } from 'viem'
 import { useHistory, usePrice } from '../api'
@@ -38,13 +39,13 @@ function PriceCard() {
             <div><p className="text-sm text-slate-500">{t('fuelPerLitre')}</p><Big>{formatEur(d.fuel_eur, locale, 3)}</Big></div>
             <div><p className="text-sm text-slate-500">{t('polPrice')}</p><Big>{formatEur(d.pol_eur, locale, 4)}</Big></div>
           </div>
-          <p className="text-sm text-slate-700">{t('date')}: <b>{d.date}</b> · {d.n_stations} {t('stationsN')}</p>
+          <p className="text-sm text-slate-700">{t('date')}: <b>{formatDate(d.date)}</b> · {d.n_stations} {t('stationsN')}</p>
           <p className="text-sm text-slate-700">{t('source')}: {t('sourceValue')}</p>
           <p className="text-sm text-slate-700">
             {t('onchain')}:{' '}
             {d.oracle ? (
               <>
-                {t('updatedAt')} {new Date(d.oracle.updatedAt * 1000).toLocaleString(locale)}{' '}
+                {t('updatedAt')} {formatDateTime(d.oracle.updatedAt)}{' '}
                 <span className={`rounded px-2 py-0.5 text-xs font-semibold ${d.oracle.fresh ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>{d.oracle.fresh ? t('fresh') : t('stale')}</span>
               </>
             ) : t('noOracle')}
@@ -82,10 +83,10 @@ function ChartCard() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={rows} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} minTickGap={30} />
+              <XAxis dataKey="date" tick={{ fontSize: 11 }} minTickGap={30} tickFormatter={(v: string) => formatDate(v)} />
               <YAxis yAxisId="l" tick={{ fontSize: 11 }} domain={[(min: number) => Math.max(0, Math.floor((min - 0.2) * 10) / 10), (max: number) => Math.ceil((max + 0.2) * 10) / 10]} width={48} tickFormatter={(v: number) => v.toFixed(2)} />
               {showPol && <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 11 }} domain={['auto', 'auto']} width={48} tickFormatter={(v: number) => v.toFixed(3)} />}
-              <Tooltip formatter={(v) => formatEur(Number(v), locale, 3)} />
+              <Tooltip labelFormatter={(v) => formatDate(String(v))} formatter={(v) => formatEur(Number(v), locale, 3)} />
               <Legend />
               <Line yAxisId="l" type="monotone" dataKey="fuel_eur" name={mode === 'fuel' ? t('chartFuel') : t('chartToken')} stroke="#d97706" strokeWidth={2} dot={rows.length < 40} />
               {showPol && <Line yAxisId="r" type="monotone" dataKey="pol_eur" name={t('chartPol')} stroke="#4f46e5" strokeWidth={2} dot={rows.length < 40} />}

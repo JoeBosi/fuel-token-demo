@@ -26,3 +26,9 @@ Playwright + Chrome di sistema, 390 / 320 / 1280 px, contro Amoy reale. Il walle
 ## Osservazioni minori (non cambiate)
 - Con importi minimi il saldo mostra 3 decimali (0,001 FUEL = 0,00 EUR).
 - Con rete sbagliata ci sono 3 bottoni "Passa a Polygon Amoy" (header, titolo, banner).
+
+## Giro 2 (01/11/2026): bandierina lingua e date
+- Header: bottone con bandierina SVG inline + codice della lingua di arrivo (UK/EN sulle pagine IT, Italia/IT sulle EN), aria-label/title nella lingua corrente, altezza 40 px a 390 px; `<html lang>` aggiornato, localStorage invariato.
+- Date: `src/lib/date.ts` (`formatDate`, `formatDateTime`), test in `date.test.ts` (verdi anche con TZ=America/Los_Angeles e Pacific/Auckland). Prezzo Home/App, asse e tooltip del grafico, updatedAt on chain ("01/11/2026 22:54"): sempre dd/mm/yyyy. Chiavi del grafico restano ISO.
+- Browser 390 px (it-IT, en-US; home, /app): nessuno scroll orizzontale, link tutorial /tutorial/en/ o /it/ per lingua, footer EN in inglese.
+- Nota: "Ultime operazioni" non mostra date (nessun campo data nella lista), quindi nulla da formattare; non verificato con wallet.

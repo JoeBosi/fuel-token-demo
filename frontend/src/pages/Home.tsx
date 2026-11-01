@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { formatDate } from '../lib/date'
 import { Link } from 'react-router-dom'
 import { usePrice } from '../api'
 import { DataIcon, OracleIcon, PumpIcon, TestIcon, TokenIcon } from '../components/Illustrations'
@@ -35,7 +36,7 @@ export default function Home() {
           {price.data && (
             <>
               <p className="text-5xl font-extrabold tabular-nums text-slate-900">{formatEur(price.data.fuel_eur, locale, 3)}<span className="text-2xl font-semibold"> /L</span></p>
-              <p className="mt-1 text-sm text-slate-600">{price.data.date} · {price.data.n_stations} {t('s1Stations')}</p>
+              <p className="mt-1 text-sm text-slate-600">{formatDate(price.data.date)} · {price.data.n_stations} {t('s1Stations')}</p>
             </>
           )}
         </div>

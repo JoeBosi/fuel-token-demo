@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useEffect, useContext, useMemo, useState, type ReactNode } from 'react'
 
 const it = {
   appName: 'FuelToken',
@@ -57,7 +57,7 @@ const it = {
   h5: 'Questa pagina', h5d: 'Legge prezzo e saldo e ti fa provare, con soldi finti.',
   tutorial: 'Vai al tutorial completo',
   footer: 'Prof. Giuseppe Bosi · Dottore in Ingegneria Elettronica · Professore di Scienze e Tecnologie Informatiche',
-  lang: 'EN',
+  lang: 'EN', langLabel: 'Passa all\'inglese',
 }
 
 const en: typeof it = {
@@ -113,7 +113,7 @@ const en: typeof it = {
   h5: 'This page', h5d: 'Reads price and balance and lets you try it with play money.',
   tutorial: 'Go to the full tutorial',
   footer: 'Prof. Giuseppe Bosi · Master\'s-level degree in Electronic Engineering (5-year Italian Laurea, EQF level 7) · Teacher of Computer Science and Technology',
-  lang: 'IT',
+  lang: 'IT', langLabel: 'Switch to Italian',
 }
 
 export type Lang = 'it' | 'en'
@@ -141,6 +141,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       return n
     })
   }, [])
+  useEffect(() => { document.documentElement.lang = lang }, [lang])
   const value = useMemo<Ctx>(() => ({
     lang, toggle, locale: lang === 'it' ? 'it-IT' : 'en-GB', t: (k) => dictionary[lang][k],
   }), [lang, toggle])
