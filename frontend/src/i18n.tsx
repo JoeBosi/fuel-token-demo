@@ -21,7 +21,7 @@ const it = {
   disclaimer: 'Dimostrazione didattica su Polygon Amoy. Nessun valore reale, nessuna benzina da ritirare.',
   // app
   priceToday: 'Prezzo di oggi', fuelPerLitre: 'Benzina (self), per litro', polPrice: 'POL in euro', date: 'Data', source: 'Fonte',
-  sourceValue: 'Osservaprezzi Carburanti (MIMIT), mediana entro 30 km da Arezzo',
+  sourceValue: 'Osservaprezzi Carburanti (MIMIT), mediana dei distributori intorno ad Arezzo (circa 10 km)',
   onchain: 'Sulla catena', updatedAt: 'Aggiornato il', fresh: 'fresco', stale: 'scaduto', noOracle: 'Oracolo non letto', oracleTx: 'Vedi la transazione su Polygonscan',
   stationsN: 'distributori',
   chart: 'Andamento', chartFuel: 'Benzina €/L', chartToken: 'Valore del token in euro', chartPol: 'POL €',
@@ -79,7 +79,7 @@ const en: typeof it = {
   s5Button: 'Open the demo', s5Faucet: 'How to get test POL',
   disclaimer: 'Educational demo on Polygon Amoy. No real value, no petrol to collect.',
   priceToday: 'Today\'s price', fuelPerLitre: 'Petrol (self-service), per litre', polPrice: 'POL in euro', date: 'Date', source: 'Source',
-  sourceValue: 'Osservaprezzi Carburanti (MIMIT), median within 30 km of Arezzo',
+  sourceValue: 'Osservaprezzi Carburanti (MIMIT), median of the stations around Arezzo (about 10 km)',
   onchain: 'On chain', updatedAt: 'Updated on', fresh: 'fresh', stale: 'stale', noOracle: 'Oracle not read', oracleTx: 'See the transaction on Polygonscan',
   stationsN: 'stations',
   chart: 'Trend', chartFuel: 'Petrol €/L', chartToken: 'Token value in euro', chartPol: 'POL €',
