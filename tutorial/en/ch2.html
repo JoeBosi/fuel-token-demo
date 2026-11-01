@@ -13,7 +13,7 @@
 <p class="kicker">Chapter 2 of 9</p><h1>The Ministry&#x27;s open data</h1>
 <div class="goal"><strong>Goal.</strong> Understand what data we get from the Ministry and why we take the median.</div>
 <p>The Italian Ministry of Enterprises and Made in Italy publishes the prices that filling stations report every day, and shows them in the <strong>Osservaprezzi Carburanti</strong> app. The app uses a web service queried with a <code>POST</code> request that names a point on the map (latitude and longitude) and a fuel type. The answer is a list of nearby stations, each with a name, a position, the date of its last update and its prices: for each fuel a <code>price</code> in euros per litre and an <code>isSelf</code> field saying whether it is a "self" or "served" price.</p>
-<p>Our program keeps only the <strong>self-service petrol</strong> of stations around Arezzo, about forty stations. One thing to remember: the service is not officially documented as an API, so its format may change (we come back to this in the FAQ).</p>
+<p>Our program keeps only the <strong>self-service petrol</strong> of stations around Arezzo: the service returns about forty, within roughly ten kilometres of the chosen point. One thing to remember: the service is not officially documented as an API, so its format may change (we come back to this in the FAQ).</p>
 <h2>Why the median</h2>
 <p>With forty prices we need one number. The <strong>mean</strong> is pulled by a mistake: if an operator types 2.399 instead of 1.899 by accident, the mean goes up. The <strong>median</strong> is the middle value when prices are lined up, and a single mistake does not move it.</p>
 <div class="box"><strong>Analogy.</strong> Line up five people from shortest to tallest: the median is the height of the one in the middle. If a giant joins at the end, the person in the middle is still the same.</div>
@@ -26,7 +26,7 @@ const median = sorted[Math.floor(sorted.length / 2)]; // 1.989</code></pre>
 <div class="try"><h2>Try it</h2><p>Change the numbers in the list: put in a huge typo (for example 9.999) and check that the median does not move while the mean does. You can do it in the browser console (F12 key, Console tab).</p></div>
 <div class="learned"><h2>What you learned</h2><ul><li>The Ministry publishes station prices with a date and a self/served distinction.</li><li>We use self-service petrol from stations around Arezzo, about forty.</li><li>The median resists a single mistake better than the mean.</li></ul></div>
 
-<div class="nav"><a href="ch1.html">&larr; Why an oracle</a><a href="ch3.html">The wallet and the test network &rarr;</a></div>
+<div class="nav"><a href="ch1.html">&larr; Why an oracle</a><a href="index.html">Contents</a><a href="ch3.html">The wallet and the test network &rarr;</a></div>
 </main>
 <footer>Master's-level degree in Electronic Engineering (5-year Italian Laurea, pre-reform, EQF level 7) · Teacher of Computer Science and Technology</footer>
 </body>

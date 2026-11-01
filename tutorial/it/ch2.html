@@ -13,7 +13,7 @@
 <p class="kicker">Capitolo 2 di 9</p><h1>Il dato aperto del Ministero</h1>
 <div class="goal"><strong>Obiettivo.</strong> Capire che dato otteniamo dal Ministero e perché ne facciamo la mediana.</div>
 <p>Il Ministero delle Imprese e del Made in Italy pubblica i prezzi che i distributori comunicano ogni giorno, e li mostra nell'app <strong>Osservaprezzi Carburanti</strong>. L'app usa un servizio web che si interroga con una richiesta <code>POST</code> indicando un punto sulla mappa (latitudine e longitudine) e il tipo di carburante. La risposta è un elenco di impianti vicini, e per ognuno ci sono il nome, la posizione, la data dell'ultimo aggiornamento e i prezzi: per ogni carburante un <code>price</code> in euro al litro e un campo <code>isSelf</code> che dice se è prezzo «self» o «servito».</p>
-<p>Il nostro programma tiene solo la <strong>benzina self</strong> degli impianti intorno ad Arezzo, circa quaranta distributori. Un punto da ricordare: il servizio non è documentato in modo ufficiale come un'API, quindi il suo formato potrebbe cambiare (lo riprendiamo nelle domande frequenti).</p>
+<p>Il nostro programma tiene solo la <strong>benzina self</strong> degli impianti intorno ad Arezzo: il servizio ne restituisce circa quaranta, entro una decina di chilometri dal punto scelto. Un punto da ricordare: il servizio non è documentato in modo ufficiale come un'API, quindi il suo formato potrebbe cambiare (lo riprendiamo nelle domande frequenti).</p>
 <h2>Perché la mediana</h2>
 <p>Con quaranta prezzi serve un solo numero. La <strong>media</strong> si lascia tirare da un errore: se un gestore scrive per sbaglio 2,399 invece di 1,899, la media sale. La <strong>mediana</strong> è il valore in mezzo quando i prezzi sono messi in fila, e un errore isolato non la sposta.</p>
 <div class="box"><strong>Analogia.</strong> Metti in fila cinque persone dalla più bassa alla più alta: la mediana è l'altezza di quella in mezzo. Se in fondo arriva un gigante, la persona in mezzo è sempre la stessa.</div>
@@ -26,7 +26,7 @@ const median = sorted[Math.floor(sorted.length / 2)]; // 1.989</code></pre>
 <div class="try"><h2>Prova tu</h2><p>Cambia i numeri della lista: metti un refuso enorme (per esempio 9,999) e verifica che la mediana non si muove, mentre la media sì. Puoi farlo nella console del browser (tasto F12, scheda Console).</p></div>
 <div class="learned"><h2>Cosa hai imparato</h2><ul><li>Il Ministero pubblica i prezzi degli impianti, con data e distinzione self/servito.</li><li>Usiamo la benzina self degli impianti intorno ad Arezzo, circa quaranta.</li><li>La mediana è più robusta della media davanti a un errore isolato.</li></ul></div>
 
-<div class="nav"><a href="ch1.html">&larr; Perché un oracolo</a><a href="ch3.html">Il portafoglio e la rete di prova &rarr;</a></div>
+<div class="nav"><a href="ch1.html">&larr; Perché un oracolo</a><a href="index.html">Indice</a><a href="ch3.html">Il portafoglio e la rete di prova &rarr;</a></div>
 </main>
 <footer>Dottore in Ingegneria Elettronica (V.O.) · Professore di Scienze e Tecnologie Informatiche</footer>
 </body>
