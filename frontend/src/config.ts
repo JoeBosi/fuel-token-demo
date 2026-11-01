@@ -1,4 +1,4 @@
-import { createConfig, http } from 'wagmi'
+import { createConfig, fallback, http } from 'wagmi'
 import { injected } from 'wagmi/connectors'
 import { defineChain } from 'viem'
 
@@ -6,7 +6,8 @@ export const amoy = defineChain({
   id: 80002,
   name: 'Polygon Amoy',
   nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
-  rpcUrls: { default: { http: ['https://rpc-amoy.polygon.technology'] } },
+  // rpc-amoy.polygon.technology no longer resolves (checked 01/11/2026): use public nodes instead
+  rpcUrls: { default: { http: ['https://polygon-amoy-bor-rpc.publicnode.com', 'https://polygon-amoy.drpc.org'] } },
   blockExplorers: { default: { name: 'Polygonscan', url: 'https://amoy.polygonscan.com' } },
   testnet: true,
 })
@@ -27,7 +28,7 @@ export const targetChain = TARGET_CHAIN_ID === 31337 ? localhost : amoy
 export const wagmiConfig = createConfig({
   chains: [amoy, localhost],
   connectors: [injected()],
-  transports: { [amoy.id]: http(), [localhost.id]: http() },
+  transports: { [amoy.id]: fallback(amoy.rpcUrls.default.http.map((u) => http(u))), [localhost.id]: http() },
 })
 
 /** Params for wallet_addEthereumChain (used when the wallet does not know the network). */

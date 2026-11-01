@@ -3,7 +3,7 @@ import { useI18n, type Key } from '../i18n'
 const steps: [Key, Key][] = [['h1', 'h1d'], ['h2', 'h2d'], ['h3', 'h3d'], ['h4', 'h4d'], ['h5', 'h5d']]
 
 export default function HowItWorks() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <h1 className="text-3xl font-bold">{t('howPageTitle')}</h1>
@@ -22,7 +22,7 @@ export default function HowItWorks() {
           </li>
         ))}
       </ol>
-      <a href="tutorial/" className="mt-8 inline-block rounded-lg bg-amber-500 px-5 py-3 font-semibold text-white hover:bg-amber-600">{t('tutorial')}</a>
+      <a href={`${import.meta.env.BASE_URL}tutorial/${lang}/`} className="mt-8 inline-block rounded-lg bg-amber-500 px-5 py-3 font-semibold text-white hover:bg-amber-600">{t('tutorial')}</a>
     </div>
   )
 }

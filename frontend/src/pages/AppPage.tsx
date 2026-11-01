@@ -213,6 +213,7 @@ function SellCard() {
 
 interface Op { kind: 'buy' | 'sell'; fuel: bigint; pol: bigint; hash: string; block: bigint; idx: number }
 const LOOKBACK = 40_000n
+const CHUNK = 9_000n
 
 function HistoryCard() {
   const { t, locale } = useI18n()
@@ -227,10 +228,13 @@ function HistoryCard() {
       const fromBlock = latest > LOOKBACK ? latest - LOOKBACK : 0n
       const bought = getAbiItem({ abi, name: 'Bought' }) as AbiEvent
       const sold = getAbiItem({ abi, name: 'Sold' }) as AbiEvent
-      const [b, s] = await Promise.all([
-        client!.getLogs({ address: token, event: bought, args: { buyer: address }, fromBlock, toBlock: latest }),
-        client!.getLogs({ address: token, event: sold, args: { seller: address }, fromBlock, toBlock: latest }),
-      ])
+      // public RPCs cap getLogs at 10000 blocks per call: query in chunks
+      const chunks: [bigint, bigint][] = []
+      for (let f = fromBlock; f <= latest; f += CHUNK) chunks.push([f, f + CHUNK - 1n > latest ? latest : f + CHUNK - 1n])
+      const [b, s] = await Promise.all([bought, sold].map(async (event) => {
+        const parts = await Promise.all(chunks.map(([f, t]) => client!.getLogs({ address: token, event, args: event === bought ? { buyer: address } : { seller: address }, fromBlock: f, toBlock: t })))
+        return parts.flat()
+      }))
       const ops: Op[] = []
       for (const l of b as unknown as { args: { polIn: bigint; fuelOut: bigint }; transactionHash: string; blockNumber: bigint; logIndex: number }[])
         ops.push({ kind: 'buy', fuel: l.args.fuelOut, pol: l.args.polIn, hash: l.transactionHash, block: l.blockNumber, idx: l.logIndex })

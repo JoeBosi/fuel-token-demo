@@ -11,7 +11,7 @@ export default function Faucet() {
   const badge = (s: string) =>
     s === 'live' ? ['bg-emerald-100 text-emerald-800', t('statusLive')]
       : s === 'down' || s === 'dead' ? ['bg-red-100 text-red-800', t('statusDown')]
-        : ['bg-slate-200 text-slate-700', s || t('statusUnknown')]
+        : ['bg-slate-200 text-slate-700', !s || s === 'unknown' ? t('statusUnknown') : s]
   const steps = [t('step1'), t('step2'), t('step3'), t('step4')]
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
