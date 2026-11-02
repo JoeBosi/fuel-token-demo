@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Costruisci la tua versione base · FuelToken</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="concept" role="note"><b>Concept</b>Concept a titolo didattico. Rete di prova (Polygon Amoy), soldi finti.</div>
+<div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
+<a class="lang" href="../en/build.html" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" width="24" height="12" aria-hidden="true"><clipPath id="u"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#u)"><path d="M0 0h60v30H0z" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg><span>EN</span></a></div>
+<main>
+<p class="kicker">Extra</p><h1>Costruisci la tua versione base di FuelToken</h1>
+<div class="goal"><strong>Obiettivo.</strong> Partire da una cartella vuota e arrivare a un FuelToken ridotto ma funzionante: un contratto che conserva il prezzo della benzina, un token che si compra e si vende in POL, un programma che porta il prezzo vero e una pagina web collegata a MetaMask. Tutto sul tuo computer, senza chiavi vere e senza spendere nulla.</div>
+<div class="box"><strong>Dimostrazione didattica su rete di prova: i token non hanno alcun valore reale.</strong> Questa è una versione di massima: non ha pausa, commissioni, permessi sul token né controlli di sicurezza. Il codice completo si trova anche nella cartella <code>fuel/starter/</code> del progetto, da copiare.</div>
+<h2>Cosa ti serve</h2>
+<ul><li><strong>Node.js 22</strong> (il motore che esegue programmi JavaScript fuori dal browser). Con <code>node -v</code> deve rispondere <code>v22</code> o più recente.</li><li>Un terminale e un editor di testo.</li><li>Per l'ultimo passo, il browser con l'estensione MetaMask (capitolo 3).</li></ul>
+<p>Spiegazione delle sigle usate: <strong>npm</strong> è il gestore dei pacchetti di Node.js; <strong>Hardhat</strong> è l'ambiente che compila, prova e pubblica i contratti; <strong>OpenZeppelin</strong> è una raccolta di contratti già scritti e controllati; <strong>ERC-20</strong> è lo standard dei token; <strong>RPC</strong> (Remote Procedure Call) è l'indirizzo con cui un programma parla a una rete; <strong>API</strong> è l'interfaccia con cui un servizio offre i suoi dati; <strong>POL</strong> è la moneta della rete Polygon.</p>
+
+<h2>1. Cartella vuota e strumenti</h2>
+<p>Apri il terminale e incolla questi comandi, uno dopo l'altro.</p>
+<pre><code>mkdir fuel-base
+cd fuel-base
+npm init -y
+npm install --save-dev hardhat@2 @nomicfoundation/hardhat-toolbox@5 dotenv
+npm install @openzeppelin/contracts@5
+mkdir contracts test scripts
+mkdir -p web/src</code></pre>
+<p>Il quarto comando installa Hardhat 2, i suoi strumenti di prova e <code>dotenv</code> (legge le impostazioni segrete da un file <code>.env</code>). Il quinto installa OpenZeppelin 5.</p>
+<p>Ora crea il file di configurazione di Hardhat.</p>
+<p class="fname"><code>hardhat.config.js</code></p>
+<pre><code>require(&quot;@nomicfoundation/hardhat-toolbox&quot;);
+require(&quot;dotenv&quot;).config({ quiet: true });
+
+const { AMOY_RPC_URL, DEPLOYER_PRIVATE_KEY } = process.env;
+
+module.exports = {
+  solidity: &quot;0.8.28&quot;,
+  networks: {
+    // Polygon Amoy test network (chain id 80002). Only active if you set a key in .env
+    amoy: {
+      url: AMOY_RPC_URL || &quot;https://polygon-amoy-bor-rpc.publicnode.com&quot;,
+      chainId: 80002,
+      accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
+    },
+  },
+};</code></pre>
+<p>La rete <code>amoy</code> è già descritta, ma resta spenta finché non metti una chiave nel file <code>.env</code> (passo 4). Le reti <code>hardhat</code> (temporanea, dentro il computer) e <code>localhost</code> (un nodo locale che avvierai tu) esistono già in Hardhat.</p>
+<p>Crea anche un file <code>.gitignore</code>, che impedisce di condividere per sbaglio file riservati o pesanti:</p>
+<p class="fname"><code>.gitignore</code></p>
+<pre><code>node_modules
+.env
+cache
+artifacts
+deployment.json
+web/node_modules
+web/dist
+web/src/deployment.json</code></pre>
+
+<h2>2. I due contratti</h2>
+<div class="box"><strong>Analogia.</strong> L'oracolo è una lavagna in piazza su cui solo l'incaricato può scrivere il prezzo del giorno. Il token è il cambiavalute che guarda la lavagna: se la data scritta è troppo vecchia, si rifiuta di lavorare.</div>
+<h3>L'oracolo</h3>
+<p>I prezzi hanno 6 decimali: 1,989 euro al litro si scrive <code>1989000</code>, perché i contratti non conoscono i numeri con la virgola. Solo chi ha il ruolo <code>UPDATER_ROLE</code> può scrivere; <code>isFresh</code> dice se il prezzo è abbastanza recente.</p>
+<p class="fname"><code>contracts/SimpleFuelOracle.sol</code></p>
+<pre><code>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {AccessControl} from &quot;@openzeppelin/contracts/access/AccessControl.sol&quot;;
+
+/// @title SimpleFuelOracle
+/// @notice Stores the petrol price (EUR per litre) and the POL price (EUR).
+///         Prices use 6 decimals: 1.989 EUR is stored as 1989000.
+///         Only an address with UPDATER_ROLE can write them.
+contract SimpleFuelOracle is AccessControl {
+    bytes32 public constant UPDATER_ROLE = keccak256(&quot;UPDATER_ROLE&quot;);
+
+    error ZeroPrice();
+
+    uint256 private _fuelEurPerLitre;
+    uint256 private _polEur;
+    uint64 private _updatedAt;
+
+    event PricesUpdated(uint256 fuelEurPerLitre, uint256 polEur, uint64 updatedAt);
+
+    constructor(address admin) {
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    }
+
+    function setPrices(uint256 fuelEurPerLitre, uint256 polEur) external onlyRole(UPDATER_ROLE) {
+        if (fuelEurPerLitre == 0 || polEur == 0) revert ZeroPrice();
+        _fuelEurPerLitre = fuelEurPerLitre;
+        _polEur = polEur;
+        _updatedAt = uint64(block.timestamp);
+        emit PricesUpdated(fuelEurPerLitre, polEur, _updatedAt);
+    }
+
+    /// @return price EUR per litre, 6 decimals
+    function fuelPrice() external view returns (uint256 price, uint64 updatedAt) {
+        return (_fuelEurPerLitre, _updatedAt);
+    }
+
+    /// @return price EUR per 1 POL, 6 decimals
+    function polPrice() external view returns (uint256 price, uint64 updatedAt) {
+        return (_polEur, _updatedAt);
+    }
+
+    /// @notice True if prices were set and are not older than maxAgeSeconds.
+    function isFresh(uint64 maxAgeSeconds) external view returns (bool) {
+        return _updatedAt != 0 &amp;&amp; block.timestamp &lt;= uint256(_updatedAt) + maxAgeSeconds;
+    }
+}</code></pre>
+<h3>Il token</h3>
+<p>È un ERC-20 di OpenZeppelin con due funzioni in più. <code>buy</code> riceve POL e crea FUEL; <code>sell</code> distrugge FUEL e restituisce POL, sempre al prezzo dell'oracolo. 1 FUEL (18 decimali) vale un litro.</p>
+<p class="fname"><code>contracts/SimpleFuelToken.sol</code></p>
+<pre><code>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {ERC20} from &quot;@openzeppelin/contracts/token/ERC20/ERC20.sol&quot;;
+import {SimpleFuelOracle} from &quot;./SimpleFuelOracle.sol&quot;;
+
+/// @title SimpleFuelToken
+/// @notice 1 FUEL (18 decimals) is worth one litre of petrol. Buy with POL, sell back for POL
+///         at the oracle price. No fees. Teaching demo for a test network.
+contract SimpleFuelToken is ERC20 {
+    SimpleFuelOracle public immutable oracle;
+    uint64 public constant MAX_AGE = 3 days;
+
+    error StalePrice();
+    error ZeroAmount();
+    error InsufficientReserve();
+    error TransferFailed();
+
+    constructor(address oracle_) ERC20(&quot;Simple FuelToken&quot;, &quot;FUEL&quot;) {
+        oracle = SimpleFuelOracle(oracle_);
+    }
+
+    /// @notice Send POL, receive FUEL: fuel = pol * polEur / fuelEurPerLitre.
+    function buy() external payable {
+        if (msg.value == 0) revert ZeroAmount();
+        (uint256 f, uint256 p) = _prices();
+        uint256 fuelOut = (msg.value * p) / f;
+        if (fuelOut == 0) revert ZeroAmount();
+        _mint(msg.sender, fuelOut);
+    }
+
+    /// @notice Burn FUEL, receive POL: pol = fuel * fuelEurPerLitre / polEur.
+    function sell(uint256 amount) external {
+        if (amount == 0) revert ZeroAmount();
+        (uint256 f, uint256 p) = _prices();
+        uint256 polOut = (amount * f) / p;
+        if (polOut == 0) revert ZeroAmount();
+        if (address(this).balance &lt; polOut) revert InsufficientReserve();
+        _burn(msg.sender, amount);
+        (bool ok, ) = msg.sender.call{value: polOut}(&quot;&quot;);
+        if (!ok) revert TransferFailed();
+    }
+
+    /// @notice How much FUEL you would get for a given amount of POL (in wei).
+    function quoteBuy(uint256 polWei) external view returns (uint256) {
+        (uint256 f, uint256 p) = _prices();
+        return (polWei * p) / f;
+    }
+
+    function _prices() internal view returns (uint256 f, uint256 p) {
+        if (!oracle.isFresh(MAX_AGE)) revert StalePrice();
+        (f, ) = oracle.fuelPrice();
+        (p, ) = oracle.polPrice();
+    }
+}</code></pre>
+<p>Rispetto al progetto completo mancano la pausa d'emergenza, il permesso di firma (<code>ERC20Permit</code>), la regolazione dell'età massima del prezzo, gli eventi di acquisto e vendita e la data della fonte.</p>
+<p>Compila con:</p>
+<pre><code>npx hardhat compile</code></pre>
+<p>Deve rispondere <code>Compiled 11 Solidity files successfully</code> (il numero può variare un poco: comprende anche i file di OpenZeppelin).</p>
+
+<h2>3. I test</h2>
+<p>Un test è un piccolo programma che usa il contratto e controlla il risultato. Questi sei provano i casi principali, compreso il rifiuto di un prezzo vecchio.</p>
+<p class="fname"><code>test/fuel.test.js</code></p>
+<pre><code>const { expect } = require(&quot;chai&quot;);
+const { ethers } = require(&quot;hardhat&quot;);
+const { time } = require(&quot;@nomicfoundation/hardhat-network-helpers&quot;);
+
+const FUEL = 1_989_000n; // 1.989 EUR per litre (6 decimals)
+const POL = 400_000n; // 0.40 EUR per POL (6 decimals)
+
+describe(&quot;SimpleFuelOracle and SimpleFuelToken&quot;, function () {
+  async function setup() {
+    const [admin, alice, stranger] = await ethers.getSigners();
+    const oracle = await ethers.deployContract(&quot;SimpleFuelOracle&quot;, [admin.address]);
+    await oracle.grantRole(await oracle.UPDATER_ROLE(), admin.address);
+    const token = await ethers.deployContract(&quot;SimpleFuelToken&quot;, [await oracle.getAddress()]);
+    return { admin, alice, stranger, oracle, token };
+  }
+
+  it(&quot;is not fresh before the first update&quot;, async function () {
+    const { oracle } = await setup();
+    expect(await oracle.isFresh(3 * 86400)).to.equal(false);
+  });
+
+  it(&quot;stores prices written by the updater&quot;, async function () {
+    const { oracle } = await setup();
+    await oracle.setPrices(FUEL, POL);
+    const [price] = await oracle.fuelPrice();
+    expect(price).to.equal(FUEL);
+    expect(await oracle.isFresh(3 * 86400)).to.equal(true);
+  });
+
+  it(&quot;rejects a stranger and a zero price&quot;, async function () {
+    const { oracle, stranger } = await setup();
+    await expect(oracle.connect(stranger).setPrices(FUEL, POL)).to.be.reverted;
+    await expect(oracle.setPrices(0, POL)).to.be.revertedWithCustomError(oracle, &quot;ZeroPrice&quot;);
+  });
+
+  it(&quot;buys FUEL at the oracle price&quot;, async function () {
+    const { oracle, token, alice } = await setup();
+    await oracle.setPrices(FUEL, POL);
+    // 1 POL = 0.40 EUR, 1 L = 1.989 EUR  =&gt;  0.2011... L
+    await token.connect(alice).buy({ value: ethers.parseEther(&quot;1&quot;) });
+    const expected = (ethers.parseEther(&quot;1&quot;) * POL) / FUEL;
+    expect(await token.balanceOf(alice.address)).to.equal(expected);
+  });
+
+  it(&quot;sells FUEL back for POL&quot;, async function () {
+    const { oracle, token, alice } = await setup();
+    await oracle.setPrices(FUEL, POL);
+    await token.connect(alice).buy({ value: ethers.parseEther(&quot;1&quot;) });
+    const fuel = await token.balanceOf(alice.address);
+    await expect(token.connect(alice).sell(fuel)).to.changeEtherBalance(
+      alice,
+      (fuel * FUEL) / POL
+    );
+    expect(await token.balanceOf(alice.address)).to.equal(0n);
+  });
+
+  it(&quot;refuses to trade when the price is old&quot;, async function () {
+    const { oracle, token, alice } = await setup();
+    await oracle.setPrices(FUEL, POL);
+    await time.increase(4 * 86400);
+    await expect(
+      token.connect(alice).buy({ value: ethers.parseEther(&quot;1&quot;) })
+    ).to.be.revertedWithCustomError(token, &quot;StalePrice&quot;);
+  });
+});</code></pre>
+<pre><code>npx hardhat test</code></pre>
+<p>Risultato ottenuto da noi il 2 novembre 2026 (i tempi accanto a ogni riga cambiano da un computer all'altro):</p>
+<pre><code>  SimpleFuelOracle and SimpleFuelToken
+    ✔ is not fresh before the first update
+    ✔ stores prices written by the updater
+    ✔ rejects a stranger and a zero price
+    ✔ buys FUEL at the oracle price
+    ✔ sells FUEL back for POL
+    ✔ refuses to trade when the price is old
+
+  6 passing</code></pre>
+
+<h2>4. Pubblicare sulla rete locale (e su Amoy)</h2>
+<p>«Pubblicare» (<em>deploy</em>) significa mettere i contratti su una rete e ottenere i loro indirizzi. Il programma sotto pubblica l'oracolo, dà il ruolo di scrittore al proprietario del portafoglio, pubblica il token e salva gli indirizzi in due file, che il passo 5 e il passo 6 leggono.</p>
+<p class="fname"><code>scripts/deploy.js</code></p>
+<pre><code>const fs = require(&quot;fs&quot;);
+const path = require(&quot;path&quot;);
+const { ethers, network } = require(&quot;hardhat&quot;);
+
+async function main() {
+  const [deployer] = await ethers.getSigners();
+  console.log(&quot;Network:&quot;, network.name, &quot;| deployer:&quot;, deployer.address);
+
+  const oracle = await ethers.deployContract(&quot;SimpleFuelOracle&quot;, [deployer.address]);
+  await oracle.waitForDeployment();
+  await (await oracle.grantRole(await oracle.UPDATER_ROLE(), deployer.address)).wait();
+
+  const token = await ethers.deployContract(&quot;SimpleFuelToken&quot;, [await oracle.getAddress()]);
+  await token.waitForDeployment();
+
+  const info = {
+    chainId: Number((await ethers.provider.getNetwork()).chainId),
+    oracle: await oracle.getAddress(),
+    token: await token.getAddress(),
+  };
+  console.log(&quot;Oracle:&quot;, info.oracle);
+  console.log(&quot;Token: &quot;, info.token);
+
+  // The scripts and the web page read the addresses from these files.
+  fs.writeFileSync(&quot;deployment.json&quot;, JSON.stringify(info, null, 2));
+  fs.writeFileSync(path.join(&quot;web&quot;, &quot;src&quot;, &quot;deployment.json&quot;), JSON.stringify(info, null, 2));
+}
+
+main().catch((e) =&gt; {
+  console.error(e);
+  process.exitCode = 1;
+});</code></pre>
+<p>Avvia la rete locale in un terminale e lasciala aperta. Hardhat stampa venti conti di prova con la loro chiave: sono pubblici e usati da tutti, quindi vanno bene solo per le prove locali.</p>
+<pre><code>npx hardhat node</code></pre>
+<p>In un secondo terminale, nella stessa cartella:</p>
+<pre><code>npx hardhat run scripts/deploy.js --network localhost</code></pre>
+<p>Risposta ottenuta (su una rete locale appena avviata gli indirizzi sono sempre questi):</p>
+<pre><code>Network: localhost | deployer: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Oracle: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+Token:  0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0</code></pre>
+<h3>E su Polygon Amoy?</h3>
+<p>Per la rete di prova vera servono un portafoglio creato <strong>solo per le prove</strong> e un po' di POL gratuito (capitolo 3). Crea un file <code>.env</code> copiando <code>.env.example</code> e incolla la chiave privata del portafoglio di prova:</p>
+<p class="fname"><code>.env.example</code></p>
+<pre><code># Copy to .env and fill in. Never share this file. Use a wallet created ONLY for tests.
+AMOY_RPC_URL=https://polygon-amoy-bor-rpc.publicnode.com
+DEPLOYER_PRIVATE_KEY=
+# Optional: fixed POL price in EUR, used instead of CoinGecko
+# POL_EUR=0.10</code></pre>
+<p>Poi:</p>
+<pre><code>npx hardhat run scripts/deploy.js --network amoy</code></pre>
+<p>I dati della rete sono: Chain ID 80002, moneta POL, RPC <code>https://polygon-amoy-bor-rpc.publicnode.com</code> (già scritto nella configurazione). Il file <code>.env</code> non va mai condiviso né pubblicato, e la chiave non deve mai essere quella di un portafoglio con denaro vero.</p>
+
+<h2>5. Il programma che porta il prezzo vero</h2>
+<p>Un <strong>oracolo</strong> da solo non sa nulla: qualcuno deve scrivere il dato. Questo programma legge i prezzi della benzina self-service dall'API dell'app Osservaprezzi del Ministero (il servizio del capitolo 2), calcola la <strong>mediana</strong> (il valore centrale, che ignora i refusi), legge il prezzo del POL da CoinGecko e scrive i due numeri sull'oracolo. Per cambiare città modifica le due coordinate in alto.</p>
+<p class="fname"><code>scripts/update-price.js</code></p>
+<pre><code>// Reads the petrol price from the Italian &quot;Osservaprezzi&quot; service and the POL price
+// from CoinGecko, then writes both to the oracle.
+const { ethers } = require(&quot;hardhat&quot;);
+const deployment = require(&quot;../deployment.json&quot;);
+
+const ZONE_URL = &quot;https://carburanti.mise.gov.it/ospzApi/search/zone&quot;;
+const COINGECKO_URL =
+  &quot;https://api.coingecko.com/api/v3/simple/price?ids=polygon-ecosystem-token&amp;vs_currencies=eur&quot;;
+// Arezzo (Italy). Change these two numbers to use another city.
+const LAT = 43.4636;
+const LNG = 11.8748;
+
+function median(values) {
+  const s = [...values].sort((a, b) =&gt; a - b);
+  const m = s.length &gt;&gt; 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+async function fetchFuelPrice() {
+  const res = await fetch(ZONE_URL, {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify({
+      points: [{ lat: LAT, lng: LNG }],
+      radius: 30,
+      fuelType: &quot;1-x&quot;,
+      priceOrder: &quot;asc&quot;,
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+  if (!res.ok) throw new Error(&quot;Osservaprezzi HTTP &quot; + res.status);
+  const data = await res.json();
+  const prices = [];
+  for (const station of data.results ?? []) {
+    for (const f of station.fuels ?? []) {
+      // fuelId 1 = unleaded petrol, isSelf = self-service price
+      if (f.fuelId === 1 &amp;&amp; f.isSelf === true &amp;&amp; Number(f.price) &gt; 0) prices.push(Number(f.price));
+    }
+  }
+  if (prices.length === 0) throw new Error(&quot;No petrol prices found&quot;);
+  return { eur: median(prices), stations: prices.length };
+}
+
+async function fetchPolPrice() {
+  if (process.env.POL_EUR) return Number(process.env.POL_EUR); // manual override
+  const res = await fetch(COINGECKO_URL, { signal: AbortSignal.timeout(20000) });
+  if (!res.ok) throw new Error(&quot;CoinGecko HTTP &quot; + res.status);
+  const eur = (await res.json())[&quot;polygon-ecosystem-token&quot;]?.eur;
+  if (!(eur &gt; 0)) throw new Error(&quot;CoinGecko: missing price&quot;);
+  return eur;
+}
+
+async function main() {
+  const fuel = await fetchFuelPrice();
+  const pol = await fetchPolPrice();
+  console.log(`Petrol: ${fuel.eur} EUR/L (median of ${fuel.stations} stations)`);
+  console.log(`POL:    ${pol} EUR`);
+
+  const toUnits = (x) =&gt; BigInt(Math.round(x * 1e6)); // 6 decimals
+  const oracle = await ethers.getContractAt(&quot;SimpleFuelOracle&quot;, deployment.oracle);
+  const tx = await oracle.setPrices(toUnits(fuel.eur), toUnits(pol));
+  await tx.wait();
+
+  const [stored] = await oracle.fuelPrice();
+  console.log(&quot;On-chain petrol price:&quot;, Number(stored) / 1e6, &quot;EUR/L&quot;);
+  console.log(&quot;Is fresh:&quot;, await oracle.isFresh(3 * 86400));
+}
+
+main().catch((e) =&gt; {
+  console.error(e);
+  process.exitCode = 1;
+});</code></pre>
+<pre><code>npx hardhat run scripts/update-price.js --network localhost</code></pre>
+<p>Risultato ottenuto da noi il 2 novembre 2026 (i prezzi cambiano ogni giorno):</p>
+<pre><code>Petrol: 1.99 EUR/L (median of 42 stations)
+POL:    0.080189 EUR
+On-chain petrol price: 1.99 EUR/L
+Is fresh: true</code></pre>
+<p>Se CoinGecko non risponde, puoi fissare tu il prezzo del POL: <code>POL_EUR=0.08 npx hardhat run scripts/update-price.js --network localhost</code>.</p>
+<p>Il servizio del Ministero non ha un contratto di stabilità: può cambiare formato o limitare l'accesso. In quel caso il programma si ferma con un errore e non scrive nulla.</p>
+
+<h2>6. La pagina web con MetaMask</h2>
+<p>Una sola pagina che legge il prezzo dall'oracolo e permette di collegare MetaMask e comprare FUEL. Usa <strong>Vite</strong> (un programma che prepara le pagine web) e <strong>viem</strong> (una libreria per parlare con la blockchain dal browser). Il file <code>web/src/deployment.json</code> è stato scritto dal programma di pubblicazione.</p>
+<p class="fname"><code>web/package.json</code></p>
+<pre><code>{
+  &quot;name&quot;: &quot;fuel-web&quot;,
+  &quot;private&quot;: true,
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;vite&quot;,
+    &quot;build&quot;: &quot;vite build&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;viem&quot;: &quot;^2.57.14&quot;,
+    &quot;vite&quot;: &quot;^8.3.5&quot;
+  }
+}</code></pre>
+<p class="fname"><code>web/index.html</code></p>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;title&gt;My FuelToken&lt;/title&gt;
+  &lt;style&gt;
+    body { font: 17px/1.6 system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; padding: 0 1rem; background: #fff; color: #1c2330; }
+    button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem .25rem 0; }
+    .card { border: 1px solid #dde2ec; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+    #status { color: #5b6779; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;My FuelToken&lt;/h1&gt;
+  &lt;p&gt;Test network only. The tokens have no value.&lt;/p&gt;
+  &lt;div class=&quot;card&quot;&gt;
+    &lt;p&gt;Petrol price on the oracle: &lt;strong id=&quot;price&quot;&gt;...&lt;/strong&gt;&lt;/p&gt;
+    &lt;p id=&quot;fresh&quot;&gt;&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;
+    &lt;button id=&quot;connect&quot;&gt;Connect MetaMask&lt;/button&gt;
+    &lt;p id=&quot;account&quot;&gt;&lt;/p&gt;
+    &lt;p&gt;FUEL balance: &lt;strong id=&quot;balance&quot;&gt;-&lt;/strong&gt;&lt;/p&gt;
+    &lt;button id=&quot;buy&quot; disabled&gt;Buy FUEL with 0.1 POL&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;p id=&quot;status&quot;&gt;&lt;/p&gt;
+  &lt;script type=&quot;module&quot; src=&quot;/src/main.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p class="fname"><code>web/src/main.js</code></p>
+<pre><code>import { createPublicClient, createWalletClient, custom, http, parseEther, formatUnits } from &quot;viem&quot;;
+import { hardhat, polygonAmoy } from &quot;viem/chains&quot;;
+import deployment from &quot;./deployment.json&quot;; // written by scripts/deploy.js
+
+const chain = deployment.chainId === 80002 ? polygonAmoy : hardhat;
+
+const abi = [
+  { type: &quot;function&quot;, name: &quot;fuelPrice&quot;, stateMutability: &quot;view&quot;, inputs: [], outputs: [{ name: &quot;price&quot;, type: &quot;uint256&quot; }, { name: &quot;updatedAt&quot;, type: &quot;uint64&quot; }] },
+  { type: &quot;function&quot;, name: &quot;isFresh&quot;, stateMutability: &quot;view&quot;, inputs: [{ name: &quot;maxAgeSeconds&quot;, type: &quot;uint64&quot; }], outputs: [{ type: &quot;bool&quot; }] },
+  { type: &quot;function&quot;, name: &quot;balanceOf&quot;, stateMutability: &quot;view&quot;, inputs: [{ name: &quot;account&quot;, type: &quot;address&quot; }], outputs: [{ type: &quot;uint256&quot; }] },
+  { type: &quot;function&quot;, name: &quot;buy&quot;, stateMutability: &quot;payable&quot;, inputs: [], outputs: [] },
+];
+
+const $ = (id) =&gt; document.getElementById(id);
+const publicClient = createPublicClient({ chain, transport: http() });
+let walletClient;
+let account;
+
+async function readPrice() {
+  const [price, updatedAt] = await publicClient.readContract({
+    address: deployment.oracle, abi, functionName: &quot;fuelPrice&quot;,
+  });
+  const fresh = await publicClient.readContract({
+    address: deployment.oracle, abi, functionName: &quot;isFresh&quot;, args: [3n * 86400n],
+  });
+  $(&quot;price&quot;).textContent = formatUnits(price, 6) + &quot; EUR per litre&quot;;
+  $(&quot;fresh&quot;).textContent = fresh
+    ? &quot;Fresh. Updated &quot; + new Date(Number(updatedAt) * 1000).toLocaleString()
+    : &quot;The price is old: buying is paused.&quot;;
+}
+
+async function readBalance() {
+  if (!account) return;
+  const b = await publicClient.readContract({
+    address: deployment.token, abi, functionName: &quot;balanceOf&quot;, args: [account],
+  });
+  $(&quot;balance&quot;).textContent = formatUnits(b, 18) + &quot; FUEL&quot;;
+}
+
+$(&quot;connect&quot;).onclick = async () =&gt; {
+  if (!window.ethereum) { $(&quot;status&quot;).textContent = &quot;MetaMask not found.&quot;; return; }
+  walletClient = createWalletClient({ chain, transport: custom(window.ethereum) });
+  [account] = await walletClient.requestAddresses();
+  try { await walletClient.switchChain({ id: chain.id }); }
+  catch { await walletClient.addChain({ chain }); }
+  $(&quot;account&quot;).textContent = &quot;Connected: &quot; + account;
+  $(&quot;buy&quot;).disabled = false;
+  await readBalance();
+};
+
+$(&quot;buy&quot;).onclick = async () =&gt; {
+  $(&quot;status&quot;).textContent = &quot;Waiting for MetaMask...&quot;;
+  try {
+    const hash = await walletClient.writeContract({
+      address: deployment.token, abi, functionName: &quot;buy&quot;,
+      value: parseEther(&quot;0.1&quot;), account,
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    $(&quot;status&quot;).textContent = &quot;Done: &quot; + hash;
+    await readBalance();
+  } catch (e) {
+    $(&quot;status&quot;).textContent = &quot;Cancelled or failed: &quot; + (e.shortMessage || e.message);
+  }
+};
+
+readPrice().catch((e) =&gt; { $(&quot;price&quot;).textContent = &quot;cannot read: &quot; + e.message; });</code></pre>
+<p>Installa e avvia:</p>
+<pre><code>cd web
+npm install viem vite
+npm run dev</code></pre>
+<p>Apri l'indirizzo che Vite stampa (di solito <code>http://localhost:5173/</code>). Deve comparire il prezzo scritto al passo 5. Per comprare davvero con MetaMask, aggiungi la rete locale (nome <code>Hardhat</code>, RPC <code>http://127.0.0.1:8545</code>, Chain ID <code>31337</code>, simbolo <code>ETH</code>) e importa una chiave di prova stampata da <code>npx hardhat node</code>; la pagina chiede da sola di cambiare rete. Se hai pubblicato su Amoy, la pagina usa Amoy.</p>
+<p>Per usare la pagina con Amoy servono due cose: aver eseguito <code>deploy.js --network amoy</code> (che riscrive gli indirizzi) e aver lanciato <code>update-price.js --network amoy</code>.</p>
+
+<div class="try"><h2>Prova tu</h2><p>Dopo aver comprato 0,1 POL di FUEL dalla pagina, scrivi un tuo test che chiama <code>sell</code> con metà del saldo e controlla che il saldo di POL salga della cifra giusta. Poi cambia <code>MAX_AGE</code> nel token e guarda quale test si rompe.</p></div>
+
+<h2>Cosa abbiamo verificato davvero / cosa no</h2>
+<div class="box built"><p><strong>Verificato il 2 novembre 2026, su un VPS Linux con Node 22.23, ripetendo da zero in una cartella pulita i comandi e il codice di questa pagina (il codice mostrato è letto dai file eseguiti):</strong></p><ul>
+<li>installazione di Hardhat 2 e OpenZeppelin 5, compilazione: riuscite;</li>
+<li>6 test su 6 superati (risultato riportato sopra);</li>
+<li>pubblicazione sulla rete locale Hardhat: riuscita, indirizzi come sopra;</li>
+<li>lettura del prezzo vero dall'API Osservaprezzi (mediana di 42 distributori intorno ad Arezzo) e scrittura sull'oracolo locale: riuscite, con lettura di ritorno e <code>isFresh</code> vero;</li>
+<li>pagina web: la compilazione con Vite riesce, e in un browser automatico la pagina legge il prezzo dall'oracolo, si collega a un portafoglio e acquista FUEL sulla rete locale (saldo aggiornato).</li></ul>
+<p><strong>Non verificato:</strong></p><ul>
+<li>la pubblicazione su Polygon Amoy con chiavi proprie, che non è stata rieseguita da chi scrive con questo codice: richiede un portafoglio di prova e POL del faucet;</li>
+<li>l'uso con MetaMask vero (installato nel browser): la prova automatica ha usato un portafoglio simulato collegato alla rete locale, e la richiesta di cambio rete di MetaMask non è stata provata;</li>
+<li>la vendita (<code>sell</code>) dalla pagina web: è coperta solo dai test del contratto;</li>
+<li>il funzionamento nel tempo dell'API del Ministero e di CoinGecko, che non dipendono da noi;</li>
+<li>la sicurezza: il codice è didattico e non ha avuto alcun controllo indipendente (<em>audit</em>).</li></ul></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>Un contratto che conserva un dato e un token che lo legge sono due pezzi separati.</li><li>I test dimostrano il comportamento prima di pubblicare.</li><li>Una rete locale permette di provare tutto senza chiavi vere e senza costi.</li><li>Un programma esterno porta il dato nell'oracolo; la pagina web lo legge.</li></ul></div>
+<h2>Per approfondire</h2><ul><li><a href="https://hardhat.org/docs">Hardhat: documentazione</a></li><li><a href="https://docs.openzeppelin.com/contracts/5.x/">OpenZeppelin Contracts 5</a></li><li><a href="https://viem.sh">viem</a></li><li><a href="https://vite.dev">Vite</a></li></ul>
+<div class="nav"><a href="ch9.html">&larr; Mettiamo tutto online sulla rete di prova</a><a href="index.html">Indice</a></div>
+</main>
+<footer>Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche</footer>
+</body>
+</html>

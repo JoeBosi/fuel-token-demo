@@ -17,7 +17,7 @@ export function Wallet({ compact = false }: { compact?: boolean }) {
   if (!isConnected) {
     return (
       <button
-        className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50"
+        className="hidden min-h-11 items-center rounded-xl bg-amber-400 sm:inline-flex px-4 text-sm font-bold text-slate-900 hover:bg-amber-300 disabled:opacity-60"
         disabled={isPending}
         onClick={() => {
           if (!(window as unknown as { ethereum?: unknown }).ethereum) { toast('error', t('noWallet')); return }
@@ -30,11 +30,11 @@ export function Wallet({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
       {!compact && <span className="text-slate-500">{t('network')}:</span>}
-      <span className={`rounded px-2 py-0.5 text-xs ${wrong ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}`}>{wrong ? t('wrongNetwork') : chainName}</span>
+      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${wrong ? 'bg-red-100 text-red-900' : 'bg-emerald-100 text-emerald-900'}`}>{wrong ? t('wrongNetwork') : chainName}</span>
       {wrong && (
-        <button disabled={switching} className="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700" onClick={() => switchNetwork().catch(() => toast('error', t('txRejected')))}>{t('switchAmoy')}</button>
+        <button disabled={switching} className="min-h-11 rounded-xl bg-red-700 px-3 text-xs font-semibold text-white hover:bg-red-800" onClick={() => switchNetwork().catch(() => toast('error', t('txRejected')))}>{t('switchAmoy')}</button>
       )}
-      <button title={t('disconnect')} onClick={() => disconnect()} className="rounded border border-slate-300 px-2 py-1 font-mono text-xs hover:bg-slate-100">{shortAddress(address ?? '')}</button>
+      <button title={t('disconnect')} onClick={() => disconnect()} className="min-h-11 rounded-xl border-2 border-slate-300 px-3 font-mono text-xs hover:bg-slate-100">{shortAddress(address ?? '')}</button>
     </div>
   )
 }

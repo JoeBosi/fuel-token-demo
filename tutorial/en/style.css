@@ -30,3 +30,7 @@ li{margin:.25em 0}
 footer{max-width:46rem;margin:24px auto 0;padding:16px;border-top:1px solid #e3e7ee;color:#5b6779;font-size:14px}
 @media(min-width:700px){body{font-size:18px}main{padding:28px 16px}}
 .box h2{margin-top:0;font-size:1.05rem}.box code{overflow-wrap:anywhere}table{display:block;overflow-x:auto}
+
+.fname{margin:1em 0 .2em;font-size:.9rem;color:#33405a}.fname code{background:#e8eef8}h3{font-size:1.05rem;margin:1.2em 0 .3em}.box.built{background:#eefaf0;border-left-color:#2e8b4a}
+
+.concept{background:#0f172a;color:#fff;text-align:center;font-weight:600;font-size:14px;line-height:1.4;padding:8px 12px}.concept b{background:#fbbf24;color:#0f172a;border-radius:4px;padding:1px 7px;margin-right:8px;font-size:12px;text-transform:uppercase}

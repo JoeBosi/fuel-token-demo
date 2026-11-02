@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
-import { useAccount, useBalance, usePublicClient, useReadContract, useWriteContract } from 'wagmi'
+import { Link } from 'react-router-dom'
+import { useAccount, useBalance, useConnect, usePublicClient, useReadContract, useWriteContract } from 'wagmi'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatDate, formatDateTime } from '../lib/date'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
@@ -9,16 +10,17 @@ import { useNetworkActions } from '../components/network'
 import { useToast } from '../components/Toasts'
 import { addressesFor, fuelTokenAbi } from '../contracts/addresses'
 import { explorerTx, targetChain, TARGET_CHAIN_ID } from '../config'
-import { Wallet } from '../components/Wallet'
+import { btnPrimary, btnSecondary, Notice, Skeleton, TestnetBadge } from '../components/ui'
+import { errorKey } from '../lib/errors'
 import { useI18n } from '../i18n'
 import { formatEur, formatFuel, formatUnitsFixed, fuelValueEur, parseAmount, TOKEN_DECIMALS } from '../lib/price'
 
 const abi = fuelTokenAbi as unknown as Abi
 
-function Card({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
+function Card({ title, children, className = '', id }: { title: string; children: ReactNode; className?: string; id?: string }) {
   return (
-    <section className={`rounded-xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
-      <h2 className="mb-3 text-lg font-bold">{title}</h2>
+    <section id={id} className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>
+      <h2 className="mb-3 text-xl font-bold">{title}</h2>
       {children}
     </section>
   )
@@ -31,13 +33,13 @@ function PriceCard() {
   const d = q.data
   return (
     <Card title={t('priceToday')}>
-      {q.isLoading && <p>{t('loading')}</p>}
-      {q.isError && <p className="text-red-700">{t('error')}: {(q.error as Error).message} <button className="underline" onClick={() => q.refetch()}>{t('retry')}</button></p>}
+      {q.isLoading && <div className="space-y-3" role="status" aria-label={t('loading')}><div className="grid grid-cols-2 gap-4"><Skeleton className="h-14 w-full" /><Skeleton className="h-14 w-full" /></div><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-full" /></div>}
+      {q.isError && <Notice kind="error">{t(errorKey(q.error))} <button className="font-bold underline" onClick={() => q.refetch()}>{t('retry')}</button></Notice>}
       {d && (
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-4">
-            <div><p className="text-sm text-slate-500">{t('fuelPerLitre')}</p><Big>{formatEur(d.fuel_eur, locale, 3)}</Big></div>
-            <div><p className="text-sm text-slate-500">{t('polPrice')}</p><Big>{formatEur(d.pol_eur, locale, 4)}</Big></div>
+            <div><p className="text-sm text-slate-600">{t('fuelPerLitre')}</p><Big>{formatEur(d.fuel_eur, locale, 3)}</Big></div>
+            <div><p className="text-sm text-slate-600">{t('polPrice')}</p><Big>{formatEur(d.pol_eur, locale, 4)}</Big></div>
           </div>
           <p className="text-sm text-slate-700">{t('date')}: <b>{formatDate(d.date)}</b> · {d.n_stations} {t('stationsN')}</p>
           <p className="text-sm text-slate-700">{t('source')}: {t('sourceValue')}</p>
@@ -46,12 +48,12 @@ function PriceCard() {
             {d.oracle ? (
               <>
                 {t('updatedAt')} {formatDateTime(d.oracle.updatedAt)}{' '}
-                <span className={`rounded px-2 py-0.5 text-xs font-semibold ${d.oracle.fresh ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>{d.oracle.fresh ? t('fresh') : t('stale')}</span>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${d.oracle.fresh ? 'bg-emerald-100 text-emerald-900' : 'bg-red-100 text-red-900'}`}>{d.oracle.fresh ? t('fresh') : t('stale')}</span>
               </>
             ) : t('noOracle')}
           </p>
           {d.tx_hash && explorerTx(d.tx_hash) && (
-            <a className="text-sm font-semibold text-amber-700 underline" href={explorerTx(d.tx_hash)!} target="_blank" rel="noreferrer">{t('oracleTx')}</a>
+            <a className="inline-block py-1 text-sm font-semibold text-amber-800 underline" href={explorerTx(d.tx_hash)!} target="_blank" rel="noreferrer">{t('oracleTx')}</a>
           )}
         </div>
       )}
@@ -69,15 +71,15 @@ function ChartCard() {
     <Card title={t('chart')} className="md:col-span-2">
       <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
         {(['fuel', 'token'] as const).map((m) => (
-          <button key={m} onClick={() => setMode(m)} className={`rounded-full px-3 py-1 ${mode === m ? 'bg-amber-500 font-semibold text-white' : 'border border-slate-300 text-slate-700'}`}>
+          <button key={m} onClick={() => setMode(m)} aria-pressed={mode === m} className={`min-h-10 rounded-full px-4 ${mode === m ? 'bg-amber-400 font-bold text-slate-900' : 'border-2 border-slate-300 text-slate-800'}`}>
             {m === 'fuel' ? t('chartFuel') : t('chartToken')}
           </button>
         ))}
-        <label className="ml-2 flex items-center gap-1"><input type="checkbox" checked={showPol} onChange={(e) => setShowPol(e.target.checked)} /> {t('chartPol')}</label>
+        <label className="ml-2 flex min-h-10 items-center gap-2"><input className="h-5 w-5" type="checkbox" checked={showPol} onChange={(e) => setShowPol(e.target.checked)} /> {t('chartPol')}</label>
       </div>
-      {q.isLoading && <p>{t('loading')}</p>}
-      {q.isError && <p className="text-red-700">{t('error')}: {(q.error as Error).message}</p>}
-      {q.data && rows.length === 0 && <p className="text-slate-600">{t('chartEmpty')}</p>}
+      {q.isLoading && <Skeleton className="h-64 w-full" />}
+      {q.isError && <Notice kind="error">{t(errorKey(q.error))} <button className="font-bold underline" onClick={() => q.refetch()}>{t('retry')}</button></Notice>}
+      {q.data && rows.length === 0 && <p className="text-slate-700">{t('chartEmpty')}</p>}
       {rows.length > 0 && (
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -88,13 +90,14 @@ function ChartCard() {
               {showPol && <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 11 }} domain={['auto', 'auto']} width={48} tickFormatter={(v: number) => v.toFixed(3)} />}
               <Tooltip labelFormatter={(v) => formatDate(String(v))} formatter={(v) => formatEur(Number(v), locale, 3)} />
               <Legend />
-              <Line yAxisId="l" type="monotone" dataKey="fuel_eur" name={mode === 'fuel' ? t('chartFuel') : t('chartToken')} stroke="#d97706" strokeWidth={2} dot={rows.length < 40} />
+              <Line yAxisId="l" type="monotone" dataKey="fuel_eur" name={mode === 'fuel' ? t('chartFuel') : t('chartToken')} stroke="#b45309" strokeWidth={3} dot={rows.length < 40 ? { r: 5 } : false} />
               {showPol && <Line yAxisId="r" type="monotone" dataKey="pol_eur" name={t('chartPol')} stroke="#4f46e5" strokeWidth={2} dot={rows.length < 40} />}
             </LineChart>
           </ResponsiveContainer>
         </div>
       )}
-      {mode === 'token' && <p className="mt-2 text-sm text-slate-600">{t('chartHint')}</p>}
+      {rows.length > 0 && rows.length < 7 && <div className="mt-3"><Notice kind="info">{(rows.length === 1 ? t('chartFew') : t('chartFewN')).replace('{n}', String(rows.length))}</Notice></div>}
+      {mode === 'token' && <p className="mt-2 text-sm text-slate-700">{t('chartHint')}</p>}
     </Card>
   )
 }
@@ -115,11 +118,12 @@ function WalletCard() {
   const price = usePrice()
   return (
     <Card title={t('wallet')}>
-      {!address ? <p className="text-slate-600">{t('walletLocked')}</p> : !token ? <p className="text-slate-600">{t('notDeployed')}</p> : (
+      {!address ? <p className="text-slate-700">{t('walletLocked')}</p> : !token ? <p className="text-slate-700">{t('notDeployed')}</p> : (
         <div className="grid grid-cols-2 gap-4">
-          <div><p className="text-sm text-slate-500">{t('balanceFuel')}</p><Big>{fuelBalance === undefined ? '...' : formatFuel(fuelBalance, locale)}</Big></div>
-          <div><p className="text-sm text-slate-500">{t('valueEur')}</p><Big>{fuelBalance === undefined || !price.data ? '...' : formatEur(fuelValueEur(fuelBalance, price.data.fuel_eur), locale)}</Big></div>
-          <div className="col-span-2"><p className="text-sm text-slate-500">{t('balancePol')}</p><Big>{polBalance === undefined ? '...' : `${formatUnitsFixed(polBalance, 18, 4)} POL`}</Big></div>
+          <div><p className="text-sm text-slate-600">{t('balanceFuel')}</p><Big>{fuelBalance === undefined ? <Skeleton className="h-8 w-20" /> : formatFuel(fuelBalance, locale)}</Big></div>
+          <div><p className="text-sm text-slate-600">{t('valueEur')}</p><Big>{fuelBalance === undefined || !price.data ? <Skeleton className="h-8 w-24" /> : formatEur(fuelValueEur(fuelBalance, price.data.fuel_eur), locale)}</Big></div>
+          <div className="col-span-2"><p className="text-sm text-slate-600">{t('balancePol')}</p><Big>{polBalance === undefined ? <Skeleton className="h-8 w-28" /> : `${formatUnitsFixed(polBalance, 18, 4)} POL`}</Big></div>
+          {fuelBalance === 0n && <p className="col-span-2 text-sm text-slate-700">{t('walletZeroFuel')}</p>}
         </div>
       )}
     </Card>
@@ -142,7 +146,7 @@ function useTrade() {
       await qc.invalidateQueries()
     } catch (e) {
       const m = e as { name?: string; shortMessage?: string }
-      toast('error', m.name === 'UserRejectedRequestError' ? t('txRejected') : `${t('txFailed')}: ${m.shortMessage ?? (e as Error).message}`)
+      toast('error', m.name === 'UserRejectedRequestError' ? t('txRejected') : `${t('txFailed')}. ${t(errorKey(e))}`)
     }
   }
   return { run, isPending }
@@ -168,15 +172,15 @@ function BuyCard() {
   const tooMuch = amount !== null && polBalance !== undefined && amount > polBalance
   const err = text && !amount ? t('invalidAmount') : tooMuch ? t('insufficientBalance') : null
   return (
-    <Card title={t('buy')}>
-      <label className="block text-sm text-slate-600">{t('buyInput')}
-        <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="0.1" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-lg" />
+    <Card title={t('buy')} id="buy">
+      <label className="block text-sm font-medium text-slate-700">{t('buyInput')}
+        <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="0.1" className="mt-1 w-full min-h-12 rounded-xl border-2 border-slate-300 px-3 py-2 text-lg" />
       </label>
-      <p className="mt-3 text-sm text-slate-600">{t('buyPreview')}</p>
+      <p className="mt-3 text-sm text-slate-700">{t('buyPreview')}</p>
       <Big>{quote.data !== undefined ? `${formatFuel(quote.data as bigint, locale)} FUEL` : '-'}</Big>
-      {quote.isError && <p className="mt-1 text-sm text-red-700">{quote.error.message.split('\n')[0]}</p>}
-      {err && <p className="mt-1 text-sm text-red-700">{err}</p>}
-      <button className="mt-4 w-full rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+      {quote.isError && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{t(errorKey(quote.error))}</p>}
+      {err && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{err}</p>}
+      <button className="mt-4 min-h-12 w-full rounded-xl bg-emerald-700 px-4 py-3 text-base font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={!!blocked || !amount || !!err || isPending} title={blocked ?? undefined}
         onClick={() => token && amount && run('buy', token, [], amount)}>{blocked ?? t('buyButton')}</button>
     </Card>
@@ -197,15 +201,15 @@ function SellCard() {
   const err = text && !amount ? t('invalidAmount') : tooMuch ? t('insufficientBalance') : lowReserve ? t('reserveLow') : null
   return (
     <Card title={t('sell')}>
-      <label className="block text-sm text-slate-600">{t('sellInput')}
-        <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="1" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-lg" />
+      <label className="block text-sm font-medium text-slate-700">{t('sellInput')}
+        <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="1" className="mt-1 w-full min-h-12 rounded-xl border-2 border-slate-300 px-3 py-2 text-lg" />
       </label>
-      <p className="mt-3 text-sm text-slate-600">{t('sellPreview')}</p>
+      <p className="mt-3 text-sm text-slate-700">{t('sellPreview')}</p>
       <Big>{polOut !== undefined ? `${formatUnitsFixed(polOut, 18, 4)} POL` : '-'}</Big>
-      <p className="mt-1 text-sm text-slate-600">{t('reserve')}: {reserve !== undefined ? `${formatUnitsFixed(reserve, 18, 4)} POL` : '-'}</p>
-      {quote.isError && <p className="mt-1 text-sm text-red-700">{quote.error.message.split('\n')[0]}</p>}
-      {err && <p className="mt-1 text-sm text-red-700">{err}</p>}
-      <button className="mt-4 w-full rounded-lg bg-rose-600 px-4 py-3 font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
+      <p className="mt-1 text-sm text-slate-700">{t('reserve')}: {reserve !== undefined ? `${formatUnitsFixed(reserve, 18, 4)} POL` : '-'}</p>
+      {quote.isError && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{t(errorKey(quote.error))}</p>}
+      {err && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{err}</p>}
+      <button className="mt-4 min-h-12 w-full rounded-xl bg-rose-700 px-4 py-3 text-base font-bold text-white hover:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={!!blocked || !amount || !!err || isPending} title={blocked ?? undefined}
         onClick={() => token && amount && run('sell', token, [amount])}>{blocked ?? t('sellButton')}</button>
     </Card>
@@ -246,18 +250,18 @@ function HistoryCard() {
   })
   return (
     <Card title={t('history')} className="md:col-span-2">
-      {!address && <p className="text-slate-600">{t('histLocked')}</p>}
-      {address && q.isLoading && <p>{t('loading')}</p>}
-      {q.isError && <p className="text-red-700">{t('error')}: {(q.error as Error).message.split('\n')[0]}</p>}
-      {q.data && q.data.length === 0 && <p className="text-slate-600">{t('histEmpty')} <span className="text-xs">({t('histNote')})</span></p>}
+      {!address && <p className="text-slate-700">{t('histLocked')}</p>}
+      {address && q.isLoading && <div className="space-y-2" role="status" aria-label={t('loading')}><Skeleton className="h-8 w-full" /><Skeleton className="h-8 w-full" /></div>}
+      {q.isError && <Notice kind="error">{t(errorKey(q.error))} <button className="font-bold underline" onClick={() => q.refetch()}>{t('retry')}</button></Notice>}
+      {q.data && q.data.length === 0 && <p className="text-slate-700">{t('histEmpty')} <span className="text-xs">({t('histNote')})</span></p>}
       {q.data && q.data.length > 0 && (
         <ul className="divide-y divide-slate-100 text-sm">
           {q.data.map((o) => (
             <li key={`${o.hash}-${o.idx}`} className="flex flex-wrap items-center justify-between gap-2 py-2">
-              <span className={`rounded px-2 py-0.5 text-xs font-semibold ${o.kind === 'buy' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>{o.kind === 'buy' ? t('histBought') : t('histSold')}</span>
+              <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${o.kind === 'buy' ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'}`}>{o.kind === 'buy' ? t('histBought') : t('histSold')}</span>
               <span className="tabular-nums">{formatFuel(o.fuel, locale)} FUEL {o.kind === 'buy' ? '←' : '→'} {formatUnits(o.pol, 18).slice(0, 8)} POL</span>
               {explorerTx(o.hash)
-                ? <a className="text-amber-700 underline" href={explorerTx(o.hash)!} target="_blank" rel="noreferrer">Polygonscan</a>
+                ? <a className="py-1 font-semibold text-amber-800 underline" href={explorerTx(o.hash)!} target="_blank" rel="noreferrer">Polygonscan</a>
                 : <span className="font-mono text-xs text-slate-500">{o.hash.slice(0, 10)}...</span>}
             </li>
           ))}
@@ -267,23 +271,58 @@ function HistoryCard() {
   )
 }
 
+function NextStep() {
+  const { t } = useI18n()
+  const toast = useToast()
+  const { isConnected } = useAccount()
+  const { connectors, connect, isPending } = useConnect()
+  const { wrong, switchNetwork, isPending: switching } = useNetworkActions()
+  const { polBalance } = useTokenReads()
+  const hasEthereum = typeof window !== 'undefined' && !!(window as unknown as { ethereum?: unknown }).ethereum
+  let n = 1, title: string, body: string, action: ReactNode
+  if (!isConnected && !hasEthereum) {
+    title = t('nextNoWallet'); body = t('nextNoWalletBody')
+    action = <Link to="/faucet" className={btnSecondary}>{t('s5Faucet')}</Link>
+  } else if (!isConnected) {
+    title = t('nextConnect'); body = t('nextConnectBody')
+    action = (
+      <>
+        <button className={btnPrimary} disabled={isPending} onClick={() => connectors[0] && connect({ connector: connectors[0] })}>{isPending ? t('connecting') : t('connect')}</button>
+        <Link to="/faucet" className={btnSecondary}>{t('s5Faucet')}</Link>
+      </>
+    )
+  } else if (wrong) {
+    n = 2; title = t('nextNetwork'); body = t('nextNetworkBody')
+    action = <button className={btnPrimary} disabled={switching} onClick={() => switchNetwork().catch((e) => toast('error', t(errorKey(e))))}>{t('switchAmoy')}</button>
+  } else if (polBalance === 0n) {
+    n = 3; title = t('nextFaucet'); body = t('nextFaucetBody')
+    action = <Link to="/faucet" className={btnPrimary}>{t('nextFaucetCta')}</Link>
+  } else {
+    n = 4; title = t('nextBuy'); body = t('nextBuyBody')
+    action = <a href="#buy" className={btnPrimary}>{t('nextBuyCta')}</a>
+  }
+  return (
+    <section className="mb-4 rounded-2xl border-2 border-amber-300 bg-amber-50 p-5" aria-label={t('nextTitle')}>
+      <p className="text-xs font-bold uppercase tracking-wide text-amber-900">{t('nextTitle')} · {t('stepWord')} {n}/4</p>
+      <h2 className="mt-1 text-xl font-bold sm:text-2xl">{title}</h2>
+      <p className="mt-1 text-slate-800">{body}</p>
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row">{action}</div>
+    </section>
+  )
+}
+
 export default function AppPage() {
   const { t } = useI18n()
-  const { wrong, switchNetwork } = useNetworkActions()
-  const toast = useToast()
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold">{t('appName')} <span className="text-base font-normal text-slate-500">· {targetChain.name}</span></h1>
-        <Wallet />
-      </div>
-      {wrong && (
-        <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-900">
-          {t('wrongNetwork')}.{' '}
-          <button className="font-semibold underline" onClick={() => switchNetwork().catch(() => toast('error', t('txRejected')))}>{t('switchAmoy')}</button>
+        <div>
+          <h1 className="text-3xl font-extrabold">{t('appName')}</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-700"><TestnetBadge>{targetChain.name}</TestnetBadge><span>{t('testnetBadge')}</span></p>
         </div>
-      )}
-      <p className="mb-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">{t('disclaimer')}</p>
+      </div>
+      <NextStep />
+      <div className="mb-4"><Notice kind="warn">{t('disclaimer')}</Notice></div>
       <div className="grid gap-4 md:grid-cols-2">
         <PriceCard />
         <WalletCard />

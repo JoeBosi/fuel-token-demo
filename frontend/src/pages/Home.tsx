@@ -3,54 +3,77 @@ import { formatDate } from '../lib/date'
 import { Link } from 'react-router-dom'
 import { usePrice } from '../api'
 import { DataIcon, OracleIcon, PumpIcon, TestIcon, TokenIcon } from '../components/Illustrations'
-import { useI18n, type Key } from '../i18n'
+import { btnPrimary, btnSecondary, Notice, Skeleton, TestnetBadge } from '../components/ui'
+import { useI18n } from '../i18n'
 import { formatEur } from '../lib/price'
 
-function Section({ n, icon, title, body, tone, children }: { n: number; icon: ReactNode; title: string; body: string; tone: string; children?: ReactNode }) {
+function StepCard({ n, icon, title, body }: { n: number; icon: ReactNode; title: string; body: string }) {
   return (
-    <section className={`${tone} px-4 py-14 sm:py-20`}>
-      <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center md:flex-row md:text-left">
-        <div className="shrink-0 text-amber-600 md:order-last">{icon}</div>
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-amber-700">{n} / 5</p>
-          <h2 className="mt-1 text-3xl font-bold sm:text-4xl">{title}</h2>
-          <p className="mt-3 text-lg text-slate-700">{body}</p>
-          {children}
-        </div>
+    <li className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-base font-bold text-amber-950">{n}</span>
+        <span className="text-amber-700 [&>svg]:h-14 [&>svg]:w-14">{icon}</span>
       </div>
-    </section>
+      <h3 className="text-xl font-bold">{title}</h3>
+      <p className="text-slate-700">{body}</p>
+    </li>
   )
 }
 
 export default function Home() {
   const { t, locale } = useI18n()
   const price = usePrice()
-  const k = (x: string) => x as Key
   return (
     <div>
-      <Section n={1} tone="bg-white" icon={<PumpIcon />} title={t(k('s1Title'))} body={t(k('s1Body'))}>
-        <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5">
-          <p className="text-sm text-slate-600">{t('s1Live')}</p>
-          {price.isLoading && <p className="mt-1 text-slate-600">{t('s1Loading')}</p>}
-          {price.isError && <p className="mt-1 text-red-700">{t('s1Error')}</p>}
-          {price.data && (
-            <>
-              <p className="text-5xl font-extrabold tabular-nums text-slate-900">{formatEur(price.data.fuel_eur, locale, 3)}<span className="text-2xl font-semibold"> /L</span></p>
-              <p className="mt-1 text-sm text-slate-600">{formatDate(price.data.date)} · {price.data.n_stations} {t('s1Stations')}</p>
-            </>
-          )}
+      <section className="bg-gradient-to-b from-amber-50 to-white px-4 pb-12 pt-8 sm:pb-16 sm:pt-14">
+        <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row md:items-center">
+          <div className="flex-1">
+            <TestnetBadge>{t('testnetBadge')}</TestnetBadge>
+            <h1 className="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl">{t('s1Title')}</h1>
+            <p className="mt-3 text-lg text-slate-700">{t('s1Body')}</p>
+            <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-5 shadow-sm" aria-live="polite">
+              <p className="text-sm font-medium text-slate-700">{t('s1Live')}</p>
+              {price.isLoading && <div className="mt-2 space-y-2" role="status" aria-label={t('loadingPrice')}><Skeleton className="h-12 w-48" /><Skeleton className="h-4 w-56" /></div>}
+              {price.isError && <div className="mt-2"><Notice kind="error">{t('s1Error')} <button className="font-bold underline" onClick={() => price.refetch()}>{t('retry')}</button></Notice></div>}
+              {price.data && (
+                <>
+                  <p className="mt-1 text-5xl font-extrabold tabular-nums">{formatEur(price.data.fuel_eur, locale, 3)}<span className="text-xl font-semibold text-slate-600"> /L</span></p>
+                  <p className="mt-1 text-sm text-slate-700">{formatDate(price.data.date)} · {price.data.n_stations} {t('s1Stations')}</p>
+                </>
+              )}
+            </div>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link to="/app" className={`${btnPrimary} text-lg`}>{t('s5Button')} <span aria-hidden="true">→</span></Link>
+              <Link to="/faucet" className={btnSecondary}>{t('s5Faucet')}</Link>
+            </div>
+            <p className="mt-3 text-sm text-slate-700">{t('homeHeroNote')}</p>
+          </div>
+          <div className="hidden shrink-0 text-amber-600 md:block [&>svg]:h-44 [&>svg]:w-44"><PumpIcon /></div>
         </div>
-      </Section>
-      <Section n={2} tone="bg-slate-50" icon={<OracleIcon />} title={t('s2Title')} body={t('s2Body')} />
-      <Section n={3} tone="bg-white" icon={<DataIcon />} title={t('s3Title')} body={t('s3Body')} />
-      <Section n={4} tone="bg-slate-50" icon={<TokenIcon />} title={t('s4Title')} body={t('s4Body')} />
-      <Section n={5} tone="bg-white" icon={<TestIcon />} title={t('s5Title')} body="">
-        <div className="mt-4 flex flex-wrap justify-center gap-3 md:justify-start">
-          <Link to="/app" className="rounded-lg bg-amber-500 px-6 py-3 text-lg font-semibold text-white hover:bg-amber-600">{t('s5Button')}</Link>
-          <Link to="/faucet" className="rounded-lg border border-slate-300 px-6 py-3 text-lg font-semibold text-slate-700 hover:bg-slate-100">{t('s5Faucet')}</Link>
+      </section>
+
+      <section className="px-4 py-12 sm:py-16">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-2xl font-bold sm:text-3xl">{t('stepsTitle')}</h2>
+          <ol className="mt-6 grid gap-4 md:grid-cols-3">
+            <StepCard n={1} icon={<OracleIcon />} title={t('s2Title')} body={t('s2Body')} />
+            <StepCard n={2} icon={<DataIcon />} title={t('s3Title')} body={t('s3Body')} />
+            <StepCard n={3} icon={<TokenIcon />} title={t('s4Title')} body={t('s4Body')} />
+          </ol>
         </div>
-        <p className="mt-6 rounded-lg border-2 border-amber-400 bg-amber-50 p-4 text-left font-medium text-amber-900" role="note">{t('disclaimer')}</p>
-      </Section>
+      </section>
+
+      <section className="bg-white px-4 py-12 sm:py-16">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center">
+          <span className="text-amber-700 [&>svg]:h-20 [&>svg]:w-20"><TestIcon /></span>
+          <h2 className="text-2xl font-bold sm:text-3xl">{t('s5Title')}</h2>
+          <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+            <Link to="/app" className={`${btnPrimary} text-lg`}>{t('s5Button')} <span aria-hidden="true">→</span></Link>
+            <Link to="/faucet" className={btnSecondary}>{t('s5Faucet')}</Link>
+          </div>
+          <div className="w-full text-left"><Notice kind="warn"><b>{t('disclaimer')}</b></Notice></div>
+        </div>
+      </section>
     </div>
   )
 }

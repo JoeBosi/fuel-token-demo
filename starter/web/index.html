@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My FuelToken</title>
+  <style>
+    body { font: 17px/1.6 system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; padding: 0 1rem; background: #fff; color: #1c2330; }
+    button { font: inherit; padding: .5rem 1rem; margin: .25rem .25rem .25rem 0; }
+    .card { border: 1px solid #dde2ec; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+    #status { color: #5b6779; }
+  </style>
+</head>
+<body>
+  <h1>My FuelToken</h1>
+  <p>Test network only. The tokens have no value.</p>
+  <div class="card">
+    <p>Petrol price on the oracle: <strong id="price">...</strong></p>
+    <p id="fresh"></p>
+  </div>
+  <div class="card">
+    <button id="connect">Connect MetaMask</button>
+    <p id="account"></p>
+    <p>FUEL balance: <strong id="balance">-</strong></p>
+    <button id="buy" disabled>Buy FUEL with 0.1 POL</button>
+  </div>
+  <p id="status"></p>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -20,22 +20,27 @@ export function Layout() {
   const { t, toggle, lang } = useI18n()
   return (
     <div className="flex min-h-screen flex-col">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t('skipToContent')}</a>
+      <div className="bg-slate-900 px-4 py-2 text-center text-sm font-semibold leading-snug text-white" role="note"><span className="mr-2 rounded bg-amber-400 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-slate-900">{t('conceptTag')}</span>{t('conceptBanner')}</div>
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-          <Link to="/" className="text-lg font-bold text-amber-600">{t('appName')}</Link>
-          <nav className="order-last flex w-full gap-4 overflow-x-auto text-sm sm:order-none sm:w-auto">
+          <Link to="/" className="flex items-center gap-2 text-xl font-extrabold text-slate-900">
+            <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#fbbf24" /><path d="M11 24V9h10M11 16h7" stroke="#0f172a" strokeWidth="3" fill="none" strokeLinecap="round" /></svg>
+            {t('appName')}
+          </Link>
+          <nav className="order-last -mx-1 flex w-full gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto" aria-label="Menu">
             {links.map(([to, k]) => (
-              <NavLink key={to} to={to} end className={({ isActive }) => (isActive ? 'font-semibold text-amber-700' : 'text-slate-600 hover:text-slate-900')}>{t(k)}</NavLink>
+              <NavLink key={to} to={to} end className={({ isActive }) => `inline-flex min-h-10 shrink-0 items-center rounded-full px-4 text-sm font-semibold ${isActive ? 'bg-amber-100 text-amber-950' : 'text-slate-700 hover:bg-slate-100'}`}>{t(k)}</NavLink>
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <Wallet compact />
-            <button type="button" onClick={toggle} aria-label={t('langLabel')} title={t('langLabel')} className="inline-flex min-h-10 items-center gap-2 rounded border border-slate-300 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">{lang === 'it' ? flagUK : flagIT}<span>{t('lang')}</span></button>
+            <button type="button" onClick={toggle} aria-label={t('langLabel')} title={t('langLabel')} className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-slate-300 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">{lang === 'it' ? flagUK : flagIT}<span>{t('lang')}</span></button>
           </div>
         </div>
       </header>
-      <main className="flex-1"><Outlet /></main>
-      <footer className="border-t border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-600">
+      <main id="main" className="flex-1"><Outlet /></main>
+      <footer className="border-t border-slate-200 bg-white px-4 py-8 text-center text-xs text-slate-600">
         <p><a className="underline" href="https://www.giuseppebosi.com">{t('footer')}</a></p>
         <p className="mt-2">{t('disclaimer')}</p>
       </footer>

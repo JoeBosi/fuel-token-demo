@@ -24,9 +24,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="fixed bottom-3 left-3 right-3 z-50 flex flex-col gap-2 sm:left-auto sm:w-96" role="status" aria-live="polite">
         {items.map((x) => (
-          <div key={x.id} className={`rounded-lg border px-4 py-3 text-sm shadow ${colors[x.kind]}`}>
+          <div key={x.id} className={`rounded-xl border-2 px-4 py-3 text-sm font-medium shadow-lg ${colors[x.kind]}`}>
             {x.text}
-            {x.href && <> <a className="underline" href={x.href} target="_blank" rel="noreferrer">Polygonscan</a></>}
+            {x.href && <> <a className="font-bold underline" href={x.href} target="_blank" rel="noreferrer">Polygonscan</a></>}
           </div>
         ))}
       </div>
