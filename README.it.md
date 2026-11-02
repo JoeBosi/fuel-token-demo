@@ -1,5 +1,7 @@
 # FuelToken (demo 1)
 
+![Token Benzina · Petrol Token](frontend/public/og.jpg)
+
 Un concept a titolo didattico: un token su rete di prova che vale un litro di benzina, con il prezzo portato on-chain da un oracolo che legge i dati aperti del Ministero. Solo testnet Polygon Amoy, nessun valore reale, tutti i dati sono inventati.
 
 - **Demo online:** https://rwa-fuel.blockchain.giuseppebosi.com

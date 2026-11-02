@@ -1,5 +1,7 @@
 # FuelToken (demo 1)
 
+![Token Benzina · Petrol Token](frontend/public/og.jpg)
+
 An educational concept: a test-network token worth one litre of petrol, with the price fed by an oracle that reads Italian Ministry open data. Polygon Amoy testnet only, no real value, all data fictional.
 
 - **Live demo:** https://rwa-fuel.blockchain.giuseppebosi.com
