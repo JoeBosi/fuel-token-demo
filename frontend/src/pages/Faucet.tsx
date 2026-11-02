@@ -19,7 +19,6 @@ export default function Faucet() {
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
       <h1 className="text-3xl font-extrabold sm:text-4xl">{t('faucetTitle')}</h1>
       <p className="mt-2 text-lg text-slate-700">{t('faucetIntro')}</p>
-      <div className="mt-4"><Notice kind="warn">{t('disclaimer')}</Notice></div>
 
       <h2 className="mt-8 text-xl font-bold">{t('howTitle')}</h2>
       <ol className="mt-3 space-y-3">

@@ -3,7 +3,7 @@ import { formatDate } from '../lib/date'
 import { Link } from 'react-router-dom'
 import { usePrice } from '../api'
 import { DataIcon, OracleIcon, PumpIcon, TestIcon, TokenIcon } from '../components/Illustrations'
-import { btnPrimary, btnSecondary, Notice, Skeleton, TestnetBadge } from '../components/ui'
+import { btnPrimary, btnSecondary, Notice, Skeleton } from '../components/ui'
 import { useI18n } from '../i18n'
 import { formatEur } from '../lib/price'
 import { FlowDiagram } from '../components/FlowDiagram'
@@ -29,7 +29,6 @@ export default function Home() {
       <section className="bg-gradient-to-b from-amber-50 to-white px-4 pb-12 pt-8 sm:pb-16 sm:pt-14">
         <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row md:items-center">
           <div className="flex-1">
-            <TestnetBadge>{t('testnetBadge')}</TestnetBadge>
             <h1 className="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl">{t('s1Title')}</h1>
             <p className="mt-3 text-lg text-slate-700">{t('s1Body')}</p>
             <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-5 shadow-sm" aria-live="polite">
@@ -47,7 +46,6 @@ export default function Home() {
             <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="text-xl font-bold">{t('missionTitle')}</h2>
               <p className="mt-2 text-lg text-slate-700">{t('missionBody')}</p>
-              <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-base font-medium text-amber-950">{t('missionHonest')}</p>
               <p className="mt-5 text-sm font-semibold uppercase tracking-wide text-amber-800">{t('flowTitle')}</p>
               <div className="mt-3"><FlowDiagram /></div>
             </div>
@@ -55,7 +53,6 @@ export default function Home() {
               <Link to="/app" className={`${btnPrimary} text-lg`}>{t('s5Button')} <span aria-hidden="true">→</span></Link>
               <Link to="/faucet" className={btnSecondary}>{t('s5Faucet')}</Link>
             </div>
-            <p className="mt-3 text-sm text-slate-700">{t('homeHeroNote')}</p>
           </div>
           <div className="hidden shrink-0 text-amber-600 md:block [&>svg]:h-44 [&>svg]:w-44"><PumpIcon /></div>
         </div>
@@ -80,7 +77,6 @@ export default function Home() {
             <Link to="/app" className={`${btnPrimary} text-lg`}>{t('s5Button')} <span aria-hidden="true">→</span></Link>
             <Link to="/faucet" className={btnSecondary}>{t('s5Faucet')}</Link>
           </div>
-          <div className="w-full text-left"><Notice kind="warn"><b>{t('disclaimer')}</b></Notice></div>
         </div>
       </section>
     </div>

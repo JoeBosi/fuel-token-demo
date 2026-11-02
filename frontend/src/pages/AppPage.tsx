@@ -342,11 +342,10 @@ export default function AppPage() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-extrabold">{t('appName')}</h1>
-          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-700"><TestnetBadge>{targetChain.name}</TestnetBadge><span>{t('testnetBadge')}</span></p>
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-700"><TestnetBadge>{targetChain.name}</TestnetBadge></p>
         </div>
       </div>
       <NextStep />
-      <div className="mb-4"><Notice kind="warn">{t('disclaimer')}</Notice></div>
       <div className="grid gap-4 md:grid-cols-2">
         <PriceCard />
         <WalletCard />
