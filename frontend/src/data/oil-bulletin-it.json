@@ -1,0 +1,117 @@
+{
+ "source": "European Commission, DG Energy - Weekly Oil Bulletin, Prices History (consumer prices with duties and taxes), Italy, Euro-super 95",
+ "url": "https://energy.ec.europa.eu/document/download/906e60ca-8b6a-44e7-8589-652854d2fd3f_en?filename=Weekly_Oil_Bulletin_Prices_History_maticni_4web.xlsx",
+ "page": "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en",
+ "license": "European Commission reuse policy (Decision 2011/833/EU), CC BY 4.0 - verify on the page before publishing",
+ "scope": "Italia",
+ "product": "Euro-super 95 (benzina senza piombo 95), prezzo al consumo con accise e IVA; sheet Prices with taxes, column IT_price_with_tax_euro95",
+ "unit": "EUR/L",
+ "retrieved": "2026-11-02",
+ "method": "Valori della fonte in EUR/1000 l divisi per 1000; nessun calcolo statistico mio. Prezzo medio nazionale comunicato dall'Italia (MIMIT) per il lunedi della settimana; NON e solo self (media di mercato).",
+ "points": [
+  {
+   "date": "2026-05-04",
+   "eur_per_litre": 1.78928
+  },
+  {
+   "date": "2026-05-11",
+   "eur_per_litre": 1.93304
+  },
+  {
+   "date": "2026-05-18",
+   "eur_per_litre": 1.93682
+  },
+  {
+   "date": "2026-05-25",
+   "eur_per_litre": 1.96396
+  },
+  {
+   "date": "2026-06-01",
+   "eur_per_litre": 1.95151
+  },
+  {
+   "date": "2026-06-08",
+   "eur_per_litre": 1.92102
+  },
+  {
+   "date": "2026-06-15",
+   "eur_per_litre": 1.89546
+  },
+  {
+   "date": "2026-06-22",
+   "eur_per_litre": 1.85024
+  },
+  {
+   "date": "2026-06-29",
+   "eur_per_litre": 1.81185
+  },
+  {
+   "date": "2026-07-06",
+   "eur_per_litre": 1.81
+  },
+  {
+   "date": "2026-07-13",
+   "eur_per_litre": 1.86355
+  },
+  {
+   "date": "2026-07-20",
+   "eur_per_litre": 1.91032
+  },
+  {
+   "date": "2026-07-27",
+   "eur_per_litre": 1.96082
+  },
+  {
+   "date": "2026-08-03",
+   "eur_per_litre": 1.9923
+  },
+  {
+   "date": "2026-08-10",
+   "eur_per_litre": 1.99263
+  },
+  {
+   "date": "2026-08-17",
+   "eur_per_litre": 1.98799
+  },
+  {
+   "date": "2026-08-24",
+   "eur_per_litre": 2.00303
+  },
+  {
+   "date": "2026-08-31",
+   "eur_per_litre": 2.0167
+  },
+  {
+   "date": "2026-09-07",
+   "eur_per_litre": 2.03468
+  },
+  {
+   "date": "2026-09-14",
+   "eur_per_litre": 2.08409
+  },
+  {
+   "date": "2026-09-21",
+   "eur_per_litre": 2.14122
+  },
+  {
+   "date": "2026-09-28",
+   "eur_per_litre": 2.15617
+  },
+  {
+   "date": "2026-10-05",
+   "eur_per_litre": 2.0727
+  },
+  {
+   "date": "2026-10-12",
+   "eur_per_litre": 2.02102
+  },
+  {
+   "date": "2026-10-19",
+   "eur_per_litre": 2.01574
+  },
+  {
+   "date": "2026-10-26",
+   "eur_per_litre": 2.00583
+  }
+ ]
+}

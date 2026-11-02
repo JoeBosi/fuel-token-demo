@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useI18n, type Key } from '../i18n'
+import { Balance } from './Balance'
 import { Wallet } from './Wallet'
 
 const flagUK = (
@@ -34,10 +35,12 @@ export function Layout() {
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
+            <Balance />
             <Wallet compact />
             <button type="button" onClick={toggle} aria-label={t('langLabel')} title={t('langLabel')} className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-slate-300 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">{lang === 'it' ? flagUK : flagIT}<span>{t('lang')}</span></button>
           </div>
         </div>
+        <Balance variant="row" />
       </header></div>
       <main id="main" className="flex-1"><Outlet /></main>
       <footer className="border-t border-slate-200 bg-white px-4 py-8 text-center text-xs text-slate-600">

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { useAccount, useBalance, useConnect, usePublicClient, useReadContract, useWriteContract } from 'wagmi'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatDate, formatDateTime } from '../lib/date'
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import oilBulletin from '../data/oil-bulletin-it.json'
 import { getAbiItem, type Abi, type AbiEvent, type Address } from 'viem'
 import { useHistory, usePrice } from '../api'
 import { useNetworkActions } from '../components/network'
@@ -61,12 +62,31 @@ function PriceCard() {
   )
 }
 
+const toTs = (d: string) => Date.parse(`${d}T12:00:00Z`)
+const sixMonthsAgo = () => { const d = new Date(); d.setUTCMonth(d.getUTCMonth() - 6); return d.getTime() }
+
+function monthTicks(from: number, to: number): number[] {
+  const out: number[] = []
+  const d = new Date(from); d.setUTCDate(1); d.setUTCHours(12, 0, 0, 0); d.setUTCMonth(d.getUTCMonth() + 1)
+  while (d.getTime() <= to) { out.push(d.getTime()); d.setUTCMonth(d.getUTCMonth() + 1) }
+  return out
+}
+
 function ChartCard() {
   const { t, locale } = useI18n()
-  const q = useHistory(365)
+  const q = useHistory(366)
   const [mode, setMode] = useState<'fuel' | 'token'>('fuel')
   const [showPol, setShowPol] = useState(false)
-  const rows = q.data ?? []
+  const to = Date.now()
+  const from = sixMonthsAgo()
+  const official = oilBulletin.points.filter((p) => toTs(p.date) >= from).map((p) => ({ ts: toTs(p.date), src: p.eur_per_litre }))
+  const chain = (q.data ?? []).filter((r) => toTs(r.date) >= from).map((r) => ({ ts: toTs(r.date), chain: r.fuel_eur, pol_eur: r.pol_eur }))
+  const rows = [...official, ...chain].sort((x, y) => x.ts - y.ts)
+  const monthFmt = new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' })
+  const first = official[0]?.ts
+  const last = official[official.length - 1]?.ts
+  const fmt = (ts?: number) => (ts ? formatDate(new Date(ts).toISOString().slice(0, 10)) : '')
+  const lineName = (k: 'src' | 'chain') => (k === 'src' ? t('chartSrc') : mode === 'fuel' ? t('chartChain') : t('chartToken'))
   return (
     <Card title={t('chart')} className="md:col-span-2">
       <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
@@ -77,26 +97,30 @@ function ChartCard() {
         ))}
         <label className="ml-2 flex min-h-10 items-center gap-2"><input className="h-5 w-5" type="checkbox" checked={showPol} onChange={(e) => setShowPol(e.target.checked)} /> {t('chartPol')}</label>
       </div>
+      <p className="mb-2 text-sm font-medium text-slate-800">{t('chartWindow')}</p>
       {q.isLoading && <Skeleton className="h-64 w-full" />}
       {q.isError && <Notice kind="error">{t(errorKey(q.error))} <button className="font-bold underline" onClick={() => q.refetch()}>{t('retry')}</button></Notice>}
-      {q.data && rows.length === 0 && <p className="text-slate-700">{t('chartEmpty')}</p>}
-      {rows.length > 0 && (
-        <div className="h-64 w-full">
+      {!q.isLoading && (
+        <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={rows} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+            <ComposedChart data={rows} margin={{ top: 5, right: 12, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} minTickGap={30} tickFormatter={(v: string) => formatDate(v)} />
-              <YAxis yAxisId="l" tick={{ fontSize: 11 }} domain={[(min: number) => Math.max(0, Math.floor((min - 0.2) * 10) / 10), (max: number) => Math.ceil((max + 0.2) * 10) / 10]} width={48} tickFormatter={(v: number) => v.toFixed(2)} />
+              <XAxis dataKey="ts" type="number" scale="time" domain={[from, to]} ticks={monthTicks(from, to)} tick={{ fontSize: 12 }} tickFormatter={(v: number) => monthFmt.format(new Date(v))} />
+              <YAxis yAxisId="l" tick={{ fontSize: 11 }} domain={[(min: number) => Math.max(0, Math.floor((min - 0.1) * 10) / 10), (max: number) => Math.ceil((max + 0.1) * 10) / 10]} width={44} tickFormatter={(v: number) => v.toFixed(2)} />
               {showPol && <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 11 }} domain={['auto', 'auto']} width={48} tickFormatter={(v: number) => v.toFixed(3)} />}
-              <Tooltip labelFormatter={(v) => formatDate(String(v))} formatter={(v) => formatEur(Number(v), locale, 3)} />
-              <Legend />
-              <Line yAxisId="l" type="monotone" dataKey="fuel_eur" name={mode === 'fuel' ? t('chartFuel') : t('chartToken')} stroke="#b45309" strokeWidth={3} dot={rows.length < 40 ? { r: 5 } : false} />
-              {showPol && <Line yAxisId="r" type="monotone" dataKey="pol_eur" name={t('chartPol')} stroke="#4f46e5" strokeWidth={2} dot={rows.length < 40} />}
-            </LineChart>
+              <Tooltip labelFormatter={(v) => formatDate(new Date(Number(v)).toISOString().slice(0, 10))} formatter={(v) => formatEur(Number(v), locale, 3)} />
+              <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: 12 }} />
+              <Line yAxisId="l" dataKey="src" name={lineName('src')} type="monotone" stroke="#475569" strokeWidth={2.5} strokeDasharray="6 3" dot={{ r: 3, fill: '#475569' }} connectNulls isAnimationActive={false} />
+              <Line yAxisId="l" dataKey="chain" name={lineName('chain')} type="monotone" stroke="#d97706" strokeWidth={3} dot={{ r: 7, fill: '#f59e0b', stroke: '#92400e', strokeWidth: 2 }} connectNulls isAnimationActive={false} />
+              {showPol && <Line yAxisId="r" dataKey="pol_eur" name={t('chartPol')} type="monotone" stroke="#4f46e5" strokeWidth={2} dot={{ r: 3 }} connectNulls isAnimationActive={false} />}
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       )}
-      {rows.length > 0 && rows.length < 7 && <div className="mt-3"><Notice kind="info">{(rows.length === 1 ? t('chartFew') : t('chartFewN')).replace('{n}', String(rows.length))}</Notice></div>}
+      <div className="mt-3 space-y-2 text-sm text-slate-800">
+        <p><span className="mr-2 inline-block h-2.5 w-6 rounded bg-slate-600 align-middle" aria-hidden="true" />{t('chartSrcNote').replace('{from}', fmt(first)).replace('{to}', fmt(last))} <a className="font-semibold underline" href={oilBulletin.page} target="_blank" rel="noreferrer">{t('chartSrcLink')}</a></p>
+        <p><span className="mr-2 inline-block h-3 w-3 rounded-full border-2 border-amber-800 bg-amber-400 align-middle" aria-hidden="true" />{t('chartChainNote')}</p>
+      </div>
       {mode === 'token' && <p className="mt-2 text-sm text-slate-700">{t('chartHint')}</p>}
     </Card>
   )
