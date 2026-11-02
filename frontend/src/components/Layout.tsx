@@ -35,6 +35,7 @@ export function Layout() {
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
+            <a href={lang === 'it' ? '/tutorial/it/costruisci.html' : '/tutorial/en/build.html'} className="inline-flex min-h-10 items-center rounded-full px-3 text-sm font-bold text-[#6D28D9] hover:bg-violet-50"><span aria-hidden="true" className="mr-1 font-mono">&lt;/&gt;</span>{t('coding')}</a>
             <Balance />
             <Wallet compact />
             <button type="button" onClick={toggle} aria-label={t('langLabel')} title={t('langLabel')} className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-slate-300 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100">{lang === 'it' ? flagUK : flagIT}<span>{t('lang')}</span></button>

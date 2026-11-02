@@ -6,6 +6,7 @@ import { DataIcon, OracleIcon, PumpIcon, TestIcon, TokenIcon } from '../componen
 import { btnPrimary, btnSecondary, Notice, Skeleton } from '../components/ui'
 import { useI18n } from '../i18n'
 import { formatEur } from '../lib/price'
+import { BuildBox } from '../components/BuildBox'
 import { FlowDiagram } from '../components/FlowDiagram'
 
 function StepCard({ n, icon, title, body }: { n: number; icon: ReactNode; title: string; body: string }) {
@@ -68,6 +69,8 @@ export default function Home() {
           </ol>
         </div>
       </section>
+
+      <BuildBox />
 
       <section className="bg-white px-4 py-12 sm:py-16">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center">
