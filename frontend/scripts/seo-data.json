@@ -1,0 +1,331 @@
+{
+  "host": "https://rwa-fuel.blockchain.giuseppebosi.com",
+  "repo": "https://github.com/JoeBosi/fuel-token-demo",
+  "lastmod": "2026-11-02",
+  "ogImage": "/og.jpg",
+  "author": {
+    "name": "Giuseppe Bosi",
+    "url": "https://www.giuseppebosi.com",
+    "sameAs": [
+      "https://www.giuseppebosi.com",
+      "https://www.linkedin.com/in/giuseppebosi",
+      "https://github.com/JoeBosi/fuel-token-demo"
+    ]
+  },
+  "site": {
+    "it": {
+      "name": "Token Benzina",
+      "locale": "it_IT",
+      "imageAlt": "Token Benzina: un litro di benzina diventa un token sulla blockchain Polygon Amoy",
+      "description": "Concept didattico su Polygon Amoy: un token che vale un litro di benzina, con il prezzo dei distributori di Arezzo portato sulla blockchain da un oracolo.",
+      "courseName": "Token Benzina: il tutorial",
+      "footerSite": "Sito di Giuseppe Bosi",
+      "footerCode": "Codice su GitHub",
+      "footerLinkedin": "LinkedIn"
+    },
+    "en": {
+      "name": "Petrol Token",
+      "locale": "en_US",
+      "imageAlt": "Petrol Token: one litre of petrol becomes a token on the Polygon Amoy blockchain",
+      "description": "Educational concept on Polygon Amoy: a token worth one litre of petrol, with the Arezzo pump price brought onto the blockchain by an oracle.",
+      "courseName": "Petrol Token: the tutorial",
+      "footerSite": "Giuseppe Bosi's website",
+      "footerCode": "Code on GitHub",
+      "footerLinkedin": "LinkedIn"
+    }
+  },
+  "nav": {
+    "it": [
+      [
+        "/",
+        "Home"
+      ],
+      [
+        "/app",
+        "App"
+      ],
+      [
+        "/faucet",
+        "Faucet"
+      ],
+      [
+        "/come-funziona",
+        "Come funziona"
+      ]
+    ],
+    "en": [
+      [
+        "/",
+        "Home"
+      ],
+      [
+        "/app",
+        "App"
+      ],
+      [
+        "/faucet",
+        "Faucet"
+      ],
+      [
+        "/come-funziona",
+        "How it works"
+      ]
+    ]
+  },
+  "spa": [
+    {
+      "id": "home",
+      "path": "/",
+      "it": {
+        "title": "Token Benzina: il prezzo della benzina sulla blockchain",
+        "description": "Token benzina su blockchain: un concept didattico su Polygon Amoy dove un litro di benzina diventa un token e il prezzo di Arezzo arriva da un oracolo.",
+        "h1": "Blocca oggi il prezzo della benzina",
+        "summary": "Token Benzina è un concept didattico su Polygon Amoy, una rete di prova: un token vale un litro di benzina e il prezzo dei distributori intorno ad Arezzo, preso dai dati aperti del Ministero, viene scritto sulla blockchain da un oracolo.",
+        "breadcrumb": "Home"
+      },
+      "en": {
+        "title": "Petrol Token: a petrol price oracle on Polygon Amoy",
+        "description": "Petrol token on a blockchain: an educational concept on Polygon Amoy where one litre of petrol becomes a token and an oracle brings in the Arezzo price.",
+        "h1": "Lock in today's petrol price",
+        "summary": "Petrol Token is an educational concept on Polygon Amoy, a test network: one token is worth one litre of petrol, and the pump price around Arezzo, taken from the Ministry's open data, is written onto the blockchain by an oracle.",
+        "breadcrumb": "Home"
+      }
+    },
+    {
+      "id": "app",
+      "path": "/app",
+      "it": {
+        "title": "Prezzo benzina Arezzo e token: prova la demo",
+        "description": "Guarda il prezzo della benzina ad Arezzo scritto dall'oracolo sulla blockchain, poi compra e vendi Token Benzina con POL di prova su Polygon Amoy.",
+        "h1": "Token Benzina",
+        "summary": "Qui vedi il prezzo della benzina ad Arezzo scritto dall'oracolo sulla blockchain, l'andamento del prezzo e il tuo portafoglio MetaMask. Con POL di prova puoi comprare e vendere token da un litro.",
+        "breadcrumb": "App"
+      },
+      "en": {
+        "title": "Petrol Token demo: Arezzo petrol price and trading",
+        "description": "See the Arezzo petrol price written on the blockchain by the oracle, then buy and sell Petrol Token with test POL on the Polygon Amoy testnet.",
+        "h1": "Petrol Token",
+        "summary": "Here you see the petrol price in Arezzo written by the oracle on the blockchain, the price trend and your MetaMask wallet. With test POL you can buy and sell tokens worth one litre.",
+        "breadcrumb": "App"
+      }
+    },
+    {
+      "id": "faucet",
+      "path": "/faucet",
+      "it": {
+        "title": "POL di prova per Polygon Amoy: i faucet | Token Benzina",
+        "description": "Dove ottenere POL di prova gratuiti per la rete Polygon Amoy: l'elenco dei faucet con quantità, tempi di attesa e i passi per usarli con MetaMask.",
+        "h1": "Dove trovare POL di prova",
+        "summary": "Un faucet regala POL di prova, utili per pagare le operazioni sulla rete Amoy. Questa pagina elenca i faucet verificati e i quattro passi per usarli con MetaMask.",
+        "breadcrumb": "Faucet"
+      },
+      "en": {
+        "title": "Free test POL for Polygon Amoy: faucets | Petrol Token",
+        "description": "Where to get free test POL for the Polygon Amoy network: a list of faucets with amounts, waiting times and the steps to use them with MetaMask.",
+        "h1": "Where to get test POL",
+        "summary": "A faucet gives away test POL, which pays for operations on the Amoy network. This page lists the checked faucets and the four steps to use them with MetaMask.",
+        "breadcrumb": "Faucet"
+      }
+    },
+    {
+      "id": "how",
+      "path": "/come-funziona",
+      "it": {
+        "title": "Come funziona il token benzina: dai dati aperti alla catena",
+        "description": "Cinque passi per capire come i dati aperti sui prezzi dei carburanti del Ministero diventano un prezzo scritto da un oracolo sulla blockchain Polygon.",
+        "h1": "Come funziona",
+        "summary": "Cinque passi, dal dato aperto del Ministero sui prezzi dei carburanti alla pagina che stai guardando: lettura dei prezzi, mediana, scrittura da parte dell'oracolo, token e dimostrazione.",
+        "breadcrumb": "Come funziona"
+      },
+      "en": {
+        "title": "How the petrol token works: from open data to chain",
+        "description": "Five steps showing how the Ministry's open data on fuel prices becomes a price written by an oracle on the Polygon blockchain.",
+        "h1": "How it works",
+        "summary": "Five steps, from the Ministry's open data on fuel prices to the page you are looking at: reading the prices, the median, the oracle writing it, the token and the demo.",
+        "breadcrumb": "How it works"
+      }
+    }
+  ],
+  "tutorial": [
+    {
+      "id": "index",
+      "it": {
+        "file": "index.html",
+        "title": "Token Benzina: tutorial per costruirlo su Polygon Amoy",
+        "description": "Nove capitoli per costruire un token legato al prezzo della benzina: oracolo, contratto ERC-20, open data dei carburanti e pagina web con MetaMask.",
+        "headline": "Costruire un token legato al prezzo della benzina"
+      },
+      "en": {
+        "file": "index.html",
+        "title": "Petrol Token tutorial: build it on Polygon Amoy",
+        "description": "Nine chapters to build a token tied to the petrol price: an oracle, an ERC-20 contract, open fuel price data and a web page with MetaMask.",
+        "headline": "Build a token tied to the price of petrol"
+      }
+    },
+    {
+      "id": "ch1",
+      "it": {
+        "file": "ch1.html",
+        "title": "Perché serve un oracolo in blockchain | Token Benzina",
+        "description": "Capitolo 1: perché uno smart contract non legge internet e come un oracolo porta sulla blockchain un dato reale, come il prezzo della benzina.",
+        "headline": "Perché un oracolo"
+      },
+      "en": {
+        "file": "ch1.html",
+        "title": "Why a blockchain needs an oracle | Petrol Token",
+        "description": "Chapter 1: why a smart contract cannot read the internet, and how an oracle brings a real-world figure such as the petrol price onto the blockchain.",
+        "headline": "Why an oracle"
+      }
+    },
+    {
+      "id": "ch2",
+      "it": {
+        "file": "ch2.html",
+        "title": "Open data prezzi carburanti del Ministero | Token Benzina",
+        "description": "Capitolo 2: che cosa contengono i dati aperti sui prezzi dei carburanti del Ministero e perché per Arezzo si calcola la mediana dei distributori.",
+        "headline": "Il dato aperto del Ministero"
+      },
+      "en": {
+        "file": "ch2.html",
+        "title": "Open data on fuel prices from the Ministry | Petrol Token",
+        "description": "Chapter 2: what the Ministry's open data on fuel prices contains, and why the median of the stations around Arezzo gives a reliable price.",
+        "headline": "The Ministry's open data"
+      }
+    },
+    {
+      "id": "ch3",
+      "it": {
+        "file": "ch3.html",
+        "title": "MetaMask e rete di prova Polygon Amoy | Token Benzina",
+        "description": "Capitolo 3: configura MetaMask sulla rete Polygon Amoy e ottieni POL di prova da un faucet, per fare i tuoi primi esperimenti in blockchain.",
+        "headline": "Il portafoglio e la rete di prova"
+      },
+      "en": {
+        "file": "ch3.html",
+        "title": "MetaMask and the Polygon Amoy test network | Petrol Token",
+        "description": "Chapter 3: set up MetaMask on the Polygon Amoy network and get test POL from a faucet, ready for your first experiments on a blockchain.",
+        "headline": "The wallet and the test network"
+      }
+    },
+    {
+      "id": "ch4",
+      "it": {
+        "file": "ch4.html",
+        "title": "Il contratto oracolo del prezzo benzina | Token Benzina",
+        "description": "Capitolo 4: scrivi in Solidity un oracolo minimo per il prezzo della benzina, con un numero, una data e un solo indirizzo autorizzato ad aggiornarlo.",
+        "headline": "Il contratto del prezzo"
+      },
+      "en": {
+        "file": "ch4.html",
+        "title": "The petrol price oracle contract | Petrol Token",
+        "description": "Chapter 4: write a minimal petrol price oracle in Solidity, holding one number, one date and a single address allowed to update it.",
+        "headline": "The price contract"
+      }
+    },
+    {
+      "id": "ch5",
+      "it": {
+        "file": "ch5.html",
+        "title": "Token ERC-20 con OpenZeppelin | Token Benzina",
+        "description": "Capitolo 5: crea un token ERC-20 con OpenZeppelin in poche righe di Solidity e scopri che cosa significano i decimali di un token.",
+        "headline": "Il token con OpenZeppelin"
+      },
+      "en": {
+        "file": "ch5.html",
+        "title": "An ERC-20 token with OpenZeppelin | Petrol Token",
+        "description": "Chapter 5: create an ERC-20 token with OpenZeppelin in a few lines of Solidity and learn what the decimals of a token mean.",
+        "headline": "The token with OpenZeppelin"
+      }
+    },
+    {
+      "id": "ch6",
+      "it": {
+        "file": "ch6.html",
+        "title": "Comprare e vendere il token benzina in POL | Token Benzina",
+        "description": "Capitolo 6: il conto che trasforma POL in litri di benzina e viceversa, e perché il contratto tiene una riserva di POL per i rimborsi.",
+        "headline": "Comprare e vendere"
+      },
+      "en": {
+        "file": "ch6.html",
+        "title": "Buying and selling the petrol token with POL | Petrol Token",
+        "description": "Chapter 6: the arithmetic that turns POL into litres of petrol and back, and why the contract keeps a POL reserve to pay out sales.",
+        "headline": "Buying and selling"
+      }
+    },
+    {
+      "id": "ch7",
+      "it": {
+        "file": "ch7.html",
+        "title": "Aggiornare l'oracolo ogni mattina | Token Benzina",
+        "description": "Capitolo 7: un programma fuori dalla blockchain legge i prezzi dei carburanti dei distributori e li scrive nell'oracolo una volta al giorno.",
+        "headline": "Il programma che porta il prezzo ogni mattina"
+      },
+      "en": {
+        "file": "ch7.html",
+        "title": "Updating the fuel price oracle every morning | Petrol Token",
+        "description": "Chapter 7: a program outside the blockchain reads the fuel prices of the stations and writes them to the oracle once a day.",
+        "headline": "The program that brings the price every morning"
+      }
+    },
+    {
+      "id": "ch8",
+      "it": {
+        "file": "ch8.html",
+        "title": "Pagina web e MetaMask: firmare le operazioni | Token Benzina",
+        "description": "Capitolo 8: come una pagina web con React e wagmi chiede a MetaMask di firmare una transazione, e perché leggere e scrivere sulla catena sono diversi.",
+        "headline": "La pagina web e MetaMask"
+      },
+      "en": {
+        "file": "ch8.html",
+        "title": "Web page and MetaMask: signing transactions | Petrol Token",
+        "description": "Chapter 8: how a web page built with React and wagmi asks MetaMask to sign a transaction, and why reading and writing on the chain differ.",
+        "headline": "The web page and MetaMask"
+      }
+    },
+    {
+      "id": "ch9",
+      "it": {
+        "file": "ch9.html",
+        "title": "Pubblicare i contratti su Polygon Amoy | Token Benzina",
+        "description": "Capitolo 9: pubblica i due contratti sulla rete di prova Polygon Amoy, verificali su Polygonscan e controlla che l'intero percorso funzioni.",
+        "headline": "Mettiamo tutto online sulla rete di prova"
+      },
+      "en": {
+        "file": "ch9.html",
+        "title": "Deploying the contracts on Polygon Amoy | Petrol Token",
+        "description": "Chapter 9: publish the two contracts on the Polygon Amoy test network, verify them on Polygonscan and check that the whole path works.",
+        "headline": "Putting it all online on the test network"
+      }
+    },
+    {
+      "id": "faq",
+      "it": {
+        "file": "faq.html",
+        "title": "Domande frequenti sul token benzina | Token Benzina",
+        "description": "Risposte alle domande frequenti su Token Benzina: se è denaro, chi decide il prezzo, i limiti della mediana e che cosa servirebbe per un prodotto vero.",
+        "headline": "Domande frequenti"
+      },
+      "en": {
+        "file": "faq.html",
+        "title": "Petrol token FAQ: price, oracle and limits | Petrol Token",
+        "description": "Answers to common questions about Petrol Token: whether it is money, who sets the price, the limits of the median and what a real product would need.",
+        "headline": "Frequently asked questions"
+      }
+    },
+    {
+      "id": "build",
+      "it": {
+        "file": "costruisci.html",
+        "title": "Costruisci il tuo token benzina, passo passo | Token Benzina",
+        "description": "Parti da una cartella vuota e arriva a un token benzina funzionante su un computer locale: contratto, oracolo, programma del prezzo e pagina con MetaMask.",
+        "headline": "Costruisci la tua versione base di Token Benzina"
+      },
+      "en": {
+        "file": "build.html",
+        "title": "Build your own petrol token, step by step | Petrol Token",
+        "description": "Start from an empty folder and reach a working petrol token on your own computer: contract, oracle, price program and a page with MetaMask.",
+        "headline": "Build your own basic version of Petrol Token"
+      }
+    }
+  ]
+}

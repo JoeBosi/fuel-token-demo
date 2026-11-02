@@ -8,6 +8,7 @@ import App from './App'
 import { wagmiConfig } from './config'
 import { I18nProvider } from './i18n'
 import { ToastProvider } from './components/Toasts'
+import { basenameFromPath } from './lib/langUrl'
 
 const queryClient = new QueryClient()
 
@@ -17,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <I18nProvider>
           <ToastProvider>
-            <BrowserRouter basename={import.meta.env.BASE_URL}>
+            <BrowserRouter basename={basenameFromPath(window.location.pathname)}>
               <App />
             </BrowserRouter>
           </ToastProvider>

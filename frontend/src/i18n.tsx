@@ -1,4 +1,5 @@
 import { createContext, useCallback, useEffect, useContext, useMemo, useState, type ReactNode } from 'react'
+import { langFromPath, switchLangUrl } from './lib/langUrl'
 
 const it = {
   unit: 'token', priceCap: 'Benzina self-service, prezzo mediano di {n} distributori intorno ad Arezzo', chainName: 'Sulla blockchain il contratto si chiama FuelToken e il suo simbolo è FUEL: così lo trovi su Polygonscan, in MetaMask e nel codice.',
@@ -64,6 +65,7 @@ const it = {
   h5: 'Questa pagina', h5d: 'Legge prezzo e saldo e ti fa provare, con monete di prova.',
   tutorial: 'Vai al tutorial completo',
   footer: 'Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche',
+  footerSite: 'Sito di Giuseppe Bosi', footerCode: 'Codice su GitHub', footerLinkedin: 'LinkedIn',
   // ux
   missionTitle: 'Come funziona', missionBody: 'Il Token Benzina vale sempre un litro di benzina: è come un buono benzina digitale. Lo compri oggi al prezzo di oggi e domani vale ancora un litro, anche se alla pompa il prezzo sale; chiunque può controllare da dove viene il prezzo.', missionHonest: 'Dimostrazione su rete di prova, con monete di prova: il token mostra il meccanismo del buono.',
   flowTitle: 'Dal distributore al tuo wallet, in breve', flowAria: 'Schema: i distributori di Arezzo (dati MIMIT) danno i prezzi a un server che calcola il prezzo mediano, lo scrive nell\'oracolo sul contratto, il Token Benzina la usa e il risultato arriva nel tuo wallet.',
@@ -148,6 +150,7 @@ const en: typeof it = {
   h5: 'This page', h5d: 'Reads price and balance and lets you try it with test coins.',
   tutorial: 'Go to the full tutorial',
   footer: 'Prof. Giuseppe Bosi, Computer Science and Technology',
+  footerSite: 'Giuseppe Bosi\'s website', footerCode: 'Code on GitHub', footerLinkedin: 'LinkedIn',
   missionTitle: 'How it works', missionBody: 'The Petrol Token is always worth one litre of petrol: think of it as a digital petrol voucher. You buy it today at today\'s price, and tomorrow it is still worth one litre, even if the pump price goes up; anyone can check where the price comes from.', missionHonest: 'Demonstration on a test network, with test coins: the token shows how the voucher works.',
   flowTitle: 'From the pump to your wallet', flowAria: 'Diagram: petrol stations in Arezzo (MIMIT data) give prices to a server that computes the median price, writes it to the oracle on the contract, the Petrol Token uses it and the result reaches your wallet.',
   flow1: 'Arezzo petrol stations', flow1s: 'MIMIT open data', flow2: 'Server', flow2s: 'computes the median price', flow3: 'Oracle', flow3s: 'price in the contract', flow4: 'Petrol Token', flow4s: 'the digital voucher', flow5: 'Your wallet', flow5s: '1 token = 1 litre',
@@ -175,27 +178,20 @@ export type Lang = 'it' | 'en'
 export type Key = keyof typeof it
 export const dictionary = { it, en }
 
-const STORE = 'fuel-lang'
 function initial(): Lang {
-  try {
-    const v = localStorage.getItem(STORE)
-    if (v === 'it' || v === 'en') return v
-  } catch { /* storage unavailable */ }
-  return 'it'
+  // The URL decides: /en/... is English, everything else Italian.
+  return typeof window === 'undefined' ? 'it' : langFromPath(window.location.pathname)
 }
 
 interface Ctx { lang: Lang; locale: string; t: (k: Key) => string; toggle: () => void }
 const I18nContext = createContext<Ctx | null>(null)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>(initial)
+  const [lang] = useState<Lang>(initial)
   const toggle = useCallback(() => {
-    setLang((l) => {
-      const n: Lang = l === 'it' ? 'en' : 'it'
-      try { localStorage.setItem(STORE, n) } catch { /* ignore */ }
-      return n
-    })
-  }, [])
+    const { pathname, search, hash } = window.location
+    window.location.assign(switchLangUrl(pathname, search, hash, lang === 'it' ? 'en' : 'it'))
+  }, [lang])
   useEffect(() => { document.documentElement.lang = lang }, [lang])
   const value = useMemo<Ctx>(() => ({
     lang, toggle, locale: lang === 'it' ? 'it-IT' : 'en-GB', t: (k) => dictionary[lang][k],

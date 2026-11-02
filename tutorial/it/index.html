@@ -3,8 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Benzina: il tutorial</title>
 <link rel="stylesheet" href="style.css">
+<!-- seo:start -->
+<title>Token Benzina: tutorial per costruirlo su Polygon Amoy</title>
+<meta name="description" content="Nove capitoli per costruire un token legato al prezzo della benzina: oracolo, contratto ERC-20, open data dei carburanti e pagina web con MetaMask.">
+<link rel="canonical" href="https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/">
+<link rel="alternate" hreflang="it" href="https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/">
+<link rel="alternate" hreflang="en" href="https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/en/">
+<link rel="alternate" hreflang="x-default" href="https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Token Benzina">
+<meta property="og:title" content="Token Benzina: tutorial per costruirlo su Polygon Amoy">
+<meta property="og:description" content="Nove capitoli per costruire un token legato al prezzo della benzina: oracolo, contratto ERC-20, open data dei carburanti e pagina web con MetaMask.">
+<meta property="og:url" content="https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/">
+<meta property="og:image" content="https://rwa-fuel.blockchain.giuseppebosi.com/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Token Benzina: un litro di benzina diventa un token sulla blockchain Polygon Amoy">
+<meta property="og:locale" content="it_IT">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Token Benzina: tutorial per costruirlo su Polygon Amoy">
+<meta name="twitter:description" content="Nove capitoli per costruire un token legato al prezzo della benzina: oracolo, contratto ERC-20, open data dei carburanti e pagina web con MetaMask.">
+<meta name="twitter:image" content="https://rwa-fuel.blockchain.giuseppebosi.com/og.jpg">
+<meta name="twitter:image:alt" content="Token Benzina: un litro di benzina diventa un token sulla blockchain Polygon Amoy">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Course", "@id": "https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/#course", "name": "Token Benzina: il tutorial", "description": "Nove capitoli per costruire un token legato al prezzo della benzina: oracolo, contratto ERC-20, open data dei carburanti e pagina web con MetaMask.", "url": "https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/", "inLanguage": "it", "provider": {"@type": "Person", "name": "Giuseppe Bosi", "url": "https://www.giuseppebosi.com", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi", "https://github.com/JoeBosi/fuel-token-demo"]}, "author": {"@type": "Person", "name": "Giuseppe Bosi", "url": "https://www.giuseppebosi.com", "sameAs": ["https://www.giuseppebosi.com", "https://www.linkedin.com/in/giuseppebosi", "https://github.com/JoeBosi/fuel-token-demo"]}}</script>
+<!-- seo:end -->
 </head>
 <body>
 <div class="stickybar"><div class="concept" role="note"><b>BLOCKCHAIN: CASO D'USO</b>Concept a titolo didattico, rete di prova.</div>
@@ -14,6 +39,6 @@
 <div class="box"><strong>Nome sulla catena.</strong> il contratto si chiama FuelToken e il suo simbolo è FUEL; è così che lo trovi su Polygonscan, in MetaMask e nel codice dei capitoli.</div>
 <p class="kicker">Token Benzina</p><h1>Costruire un token legato al prezzo della benzina</h1><p>In nove capitoli costruisci <strong>Token Benzina</strong>: una moneta digitale di prova che vale un litro di benzina. Il prezzo lo legge ogni mattina dai distributori italiani e lo scrive sulla blockchain, così chiunque può vedere da dove viene il numero.</p><p>Non serve saper programmare per capire i concetti: ogni capitolo parte da un'immagine di tutti i giorni. Se invece vuoi costruirlo, ogni capitolo ha un pezzo di codice breve e una cosa da provare, e in un pomeriggio arrivi a una versione che funziona.</p><p>Tutto avviene su <strong>Polygon Amoy</strong>, una rete di prova dove la moneta (POL) si ottiene gratis e non vale nulla. Per questo puoi sbagliare senza perdere denaro.</p><div class="box"><strong>Token Benzina è una dimostrazione didattica su una rete di prova: i token non hanno alcun valore reale.</strong></div><div class="box live"><h2>Provalo dal vivo</h2><p>Prima di leggere puoi provare il risultato finale (su rete di prova, senza valore):</p><ul><li><a href="/">Home dell'applicazione</a></li><li><a href="/app">Pagina per comprare e vendere token (serve MetaMask su Polygon Amoy)</a></li></ul></div><h2>Come usare il tutorial</h2><ul><li>Leggi nell'ordine: ogni capitolo usa quello del precedente.</li><li>Fai sempre la parte «Prova tu»: è il modo più rapido per capire.</li><li>Il codice mostrato è una versione semplificata, ma i nomi delle funzioni sono quelli del progetto completo.</li></ul><p>Dopo i nove capitoli, la parte <a href="costruisci.html">«Costruisci la tua versione base»</a> ti guida a ricostruire una versione ridotta e funzionante sul tuo computer.</p><h2>Indice</h2><ol class="toc" style="list-style:none"><li><a href="ch1.html">1. Perché un oracolo</a></li><li><a href="ch2.html">2. Il dato aperto del Ministero</a></li><li><a href="ch3.html">3. Il portafoglio e la rete di prova</a></li><li><a href="ch4.html">4. Il contratto del prezzo</a></li><li><a href="ch5.html">5. Il token con OpenZeppelin</a></li><li><a href="ch6.html">6. Comprare e vendere</a></li><li><a href="ch7.html">7. Il programma che porta il prezzo ogni mattina</a></li><li><a href="ch8.html">8. La pagina web e MetaMask</a></li><li><a href="ch9.html">9. Mettiamo tutto online sulla rete di prova</a></li><li><a href="faq.html">Domande frequenti</a></li><li><a href="costruisci.html">Extra: costruisci la tua versione base</a></li></ol>
 </main>
-<footer><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi, Scienze e Tecnologie Informatiche</a></footer>
+
 </body>
 </html>

@@ -1,0 +1,59 @@
+# Petrol Token (Token Benzina)
+
+> Educational concept on the Polygon Amoy test network: a token worth one litre of petrol, whose euro price comes from the Italian Ministry's open fuel price data and is written onto the blockchain every morning by an oracle. Test coins only, MIT licensed, built by Giuseppe Bosi. On-chain, the contract is called FuelToken (symbol FUEL).
+
+## Pages
+
+- [Home](https://rwa-fuel.blockchain.giuseppebosi.com/en/): the idea in one page, with today's price for the stations around Arezzo.
+- [Demo app](https://rwa-fuel.blockchain.giuseppebosi.com/en/app): the oracle price, the price chart, and buying and selling the token with test POL through MetaMask.
+- [Faucets](https://rwa-fuel.blockchain.giuseppebosi.com/en/faucet): where to get free test POL for Polygon Amoy.
+- [How it works](https://rwa-fuel.blockchain.giuseppebosi.com/en/come-funziona): five steps from the open data to the page.
+
+## Tutorial and code
+
+- [Tutorial (English)](https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/en/): nine chapters on oracles, open data, wallets, Solidity contracts, ERC-20, the daily price program and the MetaMask web page.
+- [Build your own basic version](https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/en/build.html): the coding part, from an empty folder to a working reduced version.
+- [FAQ](https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/en/faq.html): common questions and limits of the approach.
+- [Source code on GitHub](https://github.com/JoeBosi/fuel-token-demo): contracts, backend, frontend and tutorial, MIT license.
+
+## Author
+
+- [Giuseppe Bosi](https://www.giuseppebosi.com): website.
+- [LinkedIn](https://www.linkedin.com/in/giuseppebosi): professional profile.
+
+## Notes
+
+- Everything runs on Polygon Amoy, a test network: coins and tokens are for demonstration only.
+- Price source: Osservaprezzi Carburanti (MIMIT) open data, median of self-service petrol prices around Arezzo.
+- The site is available in Italian and English: Italian at the root, English under /en/.
+
+---
+
+# Token Benzina (versione italiana)
+
+> Concept didattico sulla rete di prova Polygon Amoy: un token che vale un litro di benzina, il cui prezzo in euro arriva dai dati aperti del Ministero sui carburanti e viene scritto sulla blockchain ogni mattina da un oracolo. Solo monete di prova, licenza MIT, di Giuseppe Bosi. Sulla catena il contratto si chiama FuelToken (simbolo FUEL).
+
+## Pagine
+
+- [Home](https://rwa-fuel.blockchain.giuseppebosi.com/): l'idea in una pagina, con il prezzo di oggi dei distributori intorno ad Arezzo.
+- [App di dimostrazione](https://rwa-fuel.blockchain.giuseppebosi.com/app): il prezzo dell'oracolo, il grafico e l'acquisto e la vendita del token con POL di prova tramite MetaMask.
+- [Faucet](https://rwa-fuel.blockchain.giuseppebosi.com/faucet): dove ottenere POL di prova gratuiti per Polygon Amoy.
+- [Come funziona](https://rwa-fuel.blockchain.giuseppebosi.com/come-funziona): cinque passi dai dati aperti alla pagina.
+
+## Tutorial e codice
+
+- [Tutorial (italiano)](https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/): nove capitoli su oracoli, dati aperti, portafoglio, contratti Solidity, ERC-20, programma del prezzo e pagina web con MetaMask.
+- [Costruisci la tua versione base](https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/costruisci.html): la parte di coding, da una cartella vuota a una versione ridotta funzionante.
+- [Domande frequenti](https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/it/faq.html): le domande più comuni e i limiti dell'approccio.
+- [Codice su GitHub](https://github.com/JoeBosi/fuel-token-demo): contratti, backend, frontend e tutorial, licenza MIT.
+
+## Autore
+
+- [Giuseppe Bosi](https://www.giuseppebosi.com): sito personale.
+- [LinkedIn](https://www.linkedin.com/in/giuseppebosi): profilo professionale.
+
+## Note
+
+- Tutto avviene su Polygon Amoy, una rete di prova: monete e token servono alla dimostrazione.
+- Fonte del prezzo: dati aperti Osservaprezzi Carburanti (MIMIT), mediana della benzina self-service intorno ad Arezzo.
+- Il sito è in italiano e in inglese: italiano alla radice, inglese sotto /en/.

@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useI18n, type Key } from '../i18n'
 import { Balance } from './Balance'
 import { Wallet } from './Wallet'
+import { Seo } from './Seo'
 
 const flagUK = (
   <svg width="22" height="15" viewBox="0 0 60 40" aria-hidden="true" className="rounded-sm border border-slate-300">
@@ -21,6 +22,7 @@ export function Layout() {
   const { t, toggle, lang } = useI18n()
   return (
     <div className="flex min-h-screen flex-col">
+      <Seo />
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t('skipToContent')}</a>
       <div className="sticky top-0 z-40"><div className="bg-slate-900 px-3 py-1 text-center text-xs sm:text-sm sm:px-4 sm:py-2 font-semibold leading-snug text-white" role="note"><span className="mr-2 rounded bg-amber-400 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-slate-900">{t('conceptTag')}</span><span className="sm:hidden">{t('conceptShort')}</span><span className="hidden sm:inline">{t('conceptBanner')}</span></div>
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -46,6 +48,11 @@ export function Layout() {
       <main id="main" className="flex-1"><Outlet /></main>
       <footer className="border-t border-slate-200 bg-white px-4 py-8 text-center text-xs text-slate-600">
         <p><a className="underline" href="https://www.giuseppebosi.com">{t('footer')}</a></p>
+        <p className="mt-2 flex flex-wrap items-center justify-center gap-x-4">
+          <a className="inline-flex min-h-11 items-center underline" href="https://www.giuseppebosi.com" target="_blank" rel="noopener">{t('footerSite')}</a>
+          <a className="inline-flex min-h-11 items-center underline" href="https://github.com/JoeBosi/fuel-token-demo" target="_blank" rel="noopener">{t('footerCode')}</a>
+          <a className="inline-flex min-h-11 items-center underline" href="https://www.linkedin.com/in/giuseppebosi" target="_blank" rel="noopener">{t('footerLinkedin')}</a>
+        </p>
         <p className="mt-2 text-xs text-slate-600">{t('chainName')}</p>
       </footer>
     </div>
