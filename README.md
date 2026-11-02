@@ -43,3 +43,9 @@ Stop the chain and the API by PID (`kill <pid>`), never with `pkill -f`.
 7. `cd contracts && npm run verify:amoy`, then check both contracts on Polygonscan (Amoy).
 8. Copy `deployments/amoy.json` into the frontend (`src/contracts/`), set `VITE_API_URL`, build.
 9. Optionally send some POL to the token contract's reserve (via a first `buy()`), so `sell()` has liquidity.
+
+## Verified source (Sourcify, Polygon Amoy)
+- FuelPriceOracle: https://repo.sourcify.dev/80002/0xf30D07696476e97103730BE0dFb55045945409D8
+- FuelToken: https://repo.sourcify.dev/80002/0x87eAE9eF4A2dD56D04b4798bA9Bc7B777E70c9ac
+
+Re-run with `node contracts/scripts/verify-sourcify.js 80002 <address> <ContractName>`.
