@@ -30,7 +30,7 @@ export function Wallet({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
       {!compact && <span className="text-slate-500">{t('network')}:</span>}
-      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${wrong ? 'bg-red-100 text-red-900' : 'bg-emerald-100 text-emerald-900'}`}>{wrong ? t('wrongNetwork') : chainName}</span>
+      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${wrong ? 'bg-red-100 text-red-900' : 'hidden min-[1280px]:inline bg-emerald-100 text-emerald-900'}`}>{wrong ? t('wrongNetwork') : chainName}</span>
       {wrong && (
         <button disabled={switching} className="min-h-11 rounded-xl bg-red-700 px-3 text-xs font-semibold text-white hover:bg-red-800" onClick={() => switchNetwork().catch(() => toast('error', t('txRejected')))}>{t('switchAmoy')}</button>
       )}

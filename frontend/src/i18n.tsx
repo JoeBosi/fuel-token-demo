@@ -3,7 +3,7 @@ import { createContext, useCallback, useEffect, useContext, useMemo, useState, t
 const it = {
   unit: 'token', priceCap: 'Benzina self-service, prezzo mediano di {n} distributori intorno ad Arezzo', chainName: 'Sulla blockchain il contratto si chiama FuelToken e il suo simbolo è FUEL: così lo trovi su Polygonscan, in MetaMask e nel codice.',
   balanceAria: 'Il tuo saldo: POL e litri di benzina in token',
-  coding: 'Coding', buildTitle: 'Costruiscilo tu: versione base, passo passo', buildBody: 'Parti da una cartella vuota e arrivi a una versione semplice e funzionante, con i comandi da copiare e l\'esito di ogni passo.', buildCoding: 'Apri il Coding (versione base)', buildTutorial: 'Tutorial completo', buildGithub: 'Codice su GitHub',
+  coding: 'Tutorial', buildTitle: 'Costruiscilo tu: versione base, passo passo', buildBody: 'Parti da una cartella vuota e arrivi a una versione semplice e funzionante, con i comandi da copiare e l\'esito di ogni passo.', buildCoding: 'Apri il Coding (versione base)', buildTutorial: 'Tutorial completo', buildGithub: 'Codice su GitHub',
   appName: 'Token Benzina',
   navHome: 'Home', navApp: 'App', navFaucet: 'Faucet', navHow: 'Come funziona',
   connect: 'Collega MetaMask', disconnect: 'Scollega', connecting: 'Collego...', noWallet: 'MetaMask non trovato: installalo per continuare.',
@@ -91,7 +91,7 @@ const it = {
 const en: typeof it = {
   unit: 'tokens', priceCap: 'Self-service petrol, median price of {n} petrol stations around Arezzo', chainName: 'On the blockchain the contract is named FuelToken and its symbol is FUEL: that is how you find it on Polygonscan, in MetaMask and in the code.',
   balanceAria: 'Your balance: POL and litres of petrol as tokens',
-  coding: 'Coding', buildTitle: 'Build it yourself: basic version, step by step', buildBody: 'Start from an empty folder and reach a simple, working version, with commands to copy and the result of every step.', buildCoding: 'Open the Coding page (basic version)', buildTutorial: 'Full tutorial', buildGithub: 'Code on GitHub',
+  coding: 'Tutorial', buildTitle: 'Build it yourself: basic version, step by step', buildBody: 'Start from an empty folder and reach a simple, working version, with commands to copy and the result of every step.', buildCoding: 'Open the Coding page (basic version)', buildTutorial: 'Full tutorial', buildGithub: 'Code on GitHub',
   appName: 'Petrol Token',
   navHome: 'Home', navApp: 'App', navFaucet: 'Faucet', navHow: 'How it works',
   connect: 'Connect MetaMask', disconnect: 'Disconnect', connecting: 'Connecting...', noWallet: 'MetaMask not found: install it to continue.',

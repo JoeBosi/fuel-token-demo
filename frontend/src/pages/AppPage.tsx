@@ -54,7 +54,7 @@ function PriceCard() {
             ) : t('noOracle')}
           </p>
           {d.tx_hash && explorerTx(d.tx_hash) && (
-            <a className="inline-block py-1 text-sm font-semibold text-amber-800 underline" href={explorerTx(d.tx_hash)!} target="_blank" rel="noreferrer">{t('oracleTx')}</a>
+            <a className="inline-block py-2.5 text-sm font-semibold text-amber-800 underline" href={explorerTx(d.tx_hash)!} target="_blank" rel="noreferrer">{t('oracleTx')}</a>
           )}
         </div>
       )}

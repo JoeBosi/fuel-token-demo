@@ -29,6 +29,6 @@ export function Balance({ variant = 'inline' }: { variant?: 'inline' | 'row' }) 
     </p>
   )
   return variant === 'row'
-    ? <div className="border-t border-slate-100 bg-amber-50/70 px-4 py-1.5 text-center sm:hidden">{text}</div>
-    : <div className="hidden sm:block">{text}</div>
+    ? <div className="border-t border-slate-100 bg-amber-50/70 px-4 py-1.5 text-center min-[1280px]:hidden">{text}</div>
+    : <div className="hidden min-[1280px]:block">{text}</div>
 }
