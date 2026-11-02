@@ -18,7 +18,7 @@ const it = {
   s4Body: 'Una moneta digitale che vale un litro di benzina. Se la benzina sale, il tuo token vale di più in euro. Puoi comprarne con POL e rivenderli.',
   s5Title: 'Provalo: rete di prova, soldi finti, zero rischi',
   s5Button: 'Apri la dimostrazione', s5Faucet: 'Come ottengo POL di prova',
-  conceptTag: 'Concept', conceptBanner: 'Concept a titolo didattico. Rete di prova (Polygon Amoy), soldi finti.',
+  conceptShort: 'Concept didattico, rete di prova', conceptTag: 'Concept', conceptBanner: 'Concept a titolo didattico. Rete di prova (Polygon Amoy), soldi finti.',
   disclaimer: 'Dimostrazione didattica su Polygon Amoy. Nessun valore reale, nessuna benzina da ritirare.',
   // app
   priceToday: 'Prezzo di oggi', fuelPerLitre: 'Benzina (self), per litro', polPrice: 'POL in euro', date: 'Data', source: 'Fonte',
@@ -98,7 +98,7 @@ const en: typeof it = {
   s4Body: 'A digital coin worth one litre of petrol. If petrol goes up, your token is worth more in euro. You can buy some with POL and sell them back.',
   s5Title: 'Try it: test network, play money, zero risk',
   s5Button: 'Open the demo', s5Faucet: 'How to get test POL',
-  conceptTag: 'Concept', conceptBanner: 'Educational concept. Test network (Polygon Amoy), play money.',
+  conceptShort: 'Educational concept, test network', conceptTag: 'Concept', conceptBanner: 'Educational concept. Test network (Polygon Amoy), play money.',
   disclaimer: 'Educational demo on Polygon Amoy. No real value, no petrol to collect.',
   priceToday: 'Today\'s price', fuelPerLitre: 'Petrol (self-service), per litre', polPrice: 'POL in euro', date: 'Date', source: 'Source',
   sourceValue: 'Osservaprezzi Carburanti (MIMIT), median of the stations around Arezzo (about 10 km)',

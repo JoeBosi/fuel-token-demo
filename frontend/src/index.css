@@ -1,6 +1,6 @@
 @import "tailwindcss";
 :root { color-scheme: light; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 10rem; }
 body { background: #f8fafc; color: #0f172a; font-size: 16px; line-height: 1.55; }
 :focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; border-radius: 6px; }
 @keyframes sk { 0% { background-position: 100% 0 } 100% { background-position: -100% 0 } }

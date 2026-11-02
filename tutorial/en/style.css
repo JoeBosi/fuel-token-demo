@@ -34,3 +34,5 @@ footer{max-width:46rem;margin:24px auto 0;padding:16px;border-top:1px solid #e3e
 .fname{margin:1em 0 .2em;font-size:.9rem;color:#33405a}.fname code{background:#e8eef8}h3{font-size:1.05rem;margin:1.2em 0 .3em}.box.built{background:#eefaf0;border-left-color:#2e8b4a}
 
 .concept{background:#0f172a;color:#fff;text-align:center;font-weight:600;font-size:14px;line-height:1.4;padding:8px 12px}.concept b{background:#fbbf24;color:#0f172a;border-radius:4px;padding:1px 7px;margin-right:8px;font-size:12px;text-transform:uppercase}
+
+.stickybar{position:sticky;top:0;z-index:50;background:#fff}.concept{font-size:12px!important;padding:5px 10px!important}@media(min-width:700px){.concept{font-size:14px!important;padding:8px 12px!important}}html{scroll-padding-top:7rem}
