@@ -32,3 +32,6 @@ Playwright + Chrome di sistema, 390 / 320 / 1280 px, contro Amoy reale. Il walle
 - Date: `src/lib/date.ts` (`formatDate`, `formatDateTime`), test in `date.test.ts` (verdi anche con TZ=America/Los_Angeles e Pacific/Auckland). Prezzo Home/App, asse e tooltip del grafico, updatedAt on chain ("01/11/2026 22:54"): sempre dd/mm/yyyy. Chiavi del grafico restano ISO.
 - Browser 390 px (it-IT, en-US; home, /app): nessuno scroll orizzontale, link tutorial /tutorial/en/ o /it/ per lingua, footer EN in inglese.
 - Nota: "Ultime operazioni" non mostra date (nessun campo data nella lista), quindi nulla da formattare; non verificato con wallet.
+
+## Real MetaMask test (02/11/2026, MetaMask 13.52, Polygon Amoy)
+Connect, switch from Ethereum to Amoy (add network), buy 0.1 POL and a sell all worked (screenshots in `qa-metamask/`). One sell attempt reverted on-chain on the first try and could not be reproduced. Fixed: POL formatting with the language separator, "< 0,001 FUEL" for tiny previews. Known: clicking "Connect" while a request is pending shows no message. Not tested: real phone, Safari, Firefox, MetaMask mobile.

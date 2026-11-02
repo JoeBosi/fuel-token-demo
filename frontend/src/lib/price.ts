@@ -14,7 +14,16 @@ export function formatEur(value: number, locale = 'it-IT', digits = 2): string {
 /** Format a FUEL amount (wei bigint or plain number) with exactly 3 decimals, truncated (never rounded up). */
 export function formatFuel(value: bigint | number, locale = 'it-IT'): string {
   const n = typeof value === 'bigint' ? Number(formatUnitsFixed(value, TOKEN_DECIMALS, 3)) : Math.trunc(value * 1000) / 1000
-  return new Intl.NumberFormat(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(n)
+  const fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })
+  // a tiny but non-zero amount must not look like zero
+  if (n === 0 && ((typeof value === 'bigint' && value > 0n) || (typeof value === 'number' && value > 0))) return `< ${fmt.format(0.001)}`
+  return fmt.format(n)
+}
+
+/** Format a POL amount (wei) truncated to `digits` decimals, with the decimal separator of the locale. */
+export function formatPol(value: bigint, locale = 'it-IT', digits = 4): string {
+  const sep = new Intl.NumberFormat(locale).formatToParts(1.1).find((p) => p.type === 'decimal')?.value ?? '.'
+  return formatUnitsFixed(value, 18, digits).replace('.', sep)
 }
 
 /** Truncate a bigint amount to `digits` decimals and return it as a decimal string. */

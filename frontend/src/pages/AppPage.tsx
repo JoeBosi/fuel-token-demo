@@ -4,7 +4,7 @@ import { useAccount, useBalance, useConnect, usePublicClient, useReadContract, u
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatDate, formatDateTime } from '../lib/date'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { getAbiItem, formatUnits, type Abi, type AbiEvent, type Address } from 'viem'
+import { getAbiItem, type Abi, type AbiEvent, type Address } from 'viem'
 import { useHistory, usePrice } from '../api'
 import { useNetworkActions } from '../components/network'
 import { useToast } from '../components/Toasts'
@@ -13,7 +13,7 @@ import { explorerTx, targetChain, TARGET_CHAIN_ID } from '../config'
 import { btnPrimary, btnSecondary, Notice, Skeleton, TestnetBadge } from '../components/ui'
 import { errorKey } from '../lib/errors'
 import { useI18n } from '../i18n'
-import { formatEur, formatFuel, formatUnitsFixed, fuelValueEur, parseAmount, TOKEN_DECIMALS } from '../lib/price'
+import { formatEur, formatFuel, formatPol, fuelValueEur, parseAmount, TOKEN_DECIMALS } from '../lib/price'
 
 const abi = fuelTokenAbi as unknown as Abi
 
@@ -122,7 +122,7 @@ function WalletCard() {
         <div className="grid grid-cols-2 gap-4">
           <div><p className="text-sm text-slate-600">{t('balanceFuel')}</p><Big>{fuelBalance === undefined ? <Skeleton className="h-8 w-20" /> : formatFuel(fuelBalance, locale)}</Big></div>
           <div><p className="text-sm text-slate-600">{t('valueEur')}</p><Big>{fuelBalance === undefined || !price.data ? <Skeleton className="h-8 w-24" /> : formatEur(fuelValueEur(fuelBalance, price.data.fuel_eur), locale)}</Big></div>
-          <div className="col-span-2"><p className="text-sm text-slate-600">{t('balancePol')}</p><Big>{polBalance === undefined ? <Skeleton className="h-8 w-28" /> : `${formatUnitsFixed(polBalance, 18, 4)} POL`}</Big></div>
+          <div className="col-span-2"><p className="text-sm text-slate-600">{t('balancePol')}</p><Big>{polBalance === undefined ? <Skeleton className="h-8 w-28" /> : `${formatPol(polBalance, locale)} POL`}</Big></div>
           {fuelBalance === 0n && <p className="col-span-2 text-sm text-slate-700">{t('walletZeroFuel')}</p>}
         </div>
       )}
@@ -188,7 +188,7 @@ function BuyCard() {
 }
 
 function SellCard() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { run, isPending } = useTrade()
   const { blocked, token } = useGate()
   const { fuelBalance, reserve } = useTokenReads()
@@ -205,8 +205,8 @@ function SellCard() {
         <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="1" className="mt-1 w-full min-h-12 rounded-xl border-2 border-slate-300 px-3 py-2 text-lg" />
       </label>
       <p className="mt-3 text-sm text-slate-700">{t('sellPreview')}</p>
-      <Big>{polOut !== undefined ? `${formatUnitsFixed(polOut, 18, 4)} POL` : '-'}</Big>
-      <p className="mt-1 text-sm text-slate-700">{t('reserve')}: {reserve !== undefined ? `${formatUnitsFixed(reserve, 18, 4)} POL` : '-'}</p>
+      <Big>{polOut !== undefined ? `${formatPol(polOut, locale)} POL` : '-'}</Big>
+      <p className="mt-1 text-sm text-slate-700">{t('reserve')}: {reserve !== undefined ? `${formatPol(reserve, locale)} POL` : '-'}</p>
       {quote.isError && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{t(errorKey(quote.error))}</p>}
       {err && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{err}</p>}
       <button className="mt-4 min-h-12 w-full rounded-xl bg-rose-700 px-4 py-3 text-base font-bold text-white hover:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-60"
@@ -259,7 +259,7 @@ function HistoryCard() {
           {q.data.map((o) => (
             <li key={`${o.hash}-${o.idx}`} className="flex flex-wrap items-center justify-between gap-2 py-2">
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${o.kind === 'buy' ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'}`}>{o.kind === 'buy' ? t('histBought') : t('histSold')}</span>
-              <span className="tabular-nums">{formatFuel(o.fuel, locale)} FUEL {o.kind === 'buy' ? '←' : '→'} {formatUnits(o.pol, 18).slice(0, 8)} POL</span>
+              <span className="tabular-nums">{formatFuel(o.fuel, locale)} FUEL {o.kind === 'buy' ? '←' : '→'} {formatPol(o.pol, locale, 6)} POL</span>
               {explorerTx(o.hash)
                 ? <a className="py-1 font-semibold text-amber-800 underline" href={explorerTx(o.hash)!} target="_blank" rel="noreferrer">Polygonscan</a>
                 : <span className="font-mono text-xs text-slate-500">{o.hash.slice(0, 10)}...</span>}
