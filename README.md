@@ -1,11 +1,21 @@
 # FuelToken (demo 1)
 
+An educational concept: a test-network token worth one litre of petrol, with the price fed by an oracle that reads Italian Ministry open data. Polygon Amoy testnet only, no real value, all data fictional.
+
+- **Live demo:** https://rwa-fuel.blockchain.giuseppebosi.com
+- **Tutorial (IT/EN):** https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/
+- **Verified contracts:** see the Sourcify section at the end.
+- **Italian version:** [README.it.md](README.it.md)
+- `starter/` has a minimal, working version you can build from scratch (see the tutorial, part "Build your own").
+- **Author:** Prof. Giuseppe Bosi, https://www.giuseppebosi.com , https://www.linkedin.com/in/giuseppebosi
+- **License:** MIT (see [LICENSE](LICENSE)).
+
 A test-network token worth one litre of petrol (1 FUEL = 1 litre). No real value.
 
 Three parts:
 
 - `contracts/`: `FuelPriceOracle` (daily petrol and POL prices, 6 decimals) and `FuelToken` (ERC-20, `buy()` / `sell()` against a POL reserve). Hardhat.
-- `backend/`: Node job that reads the median self-service petrol price within 30 km of Arezzo (Ministry Osservaprezzi API) and POL/EUR (CoinGecko), stores them in SQLite, calls `setPrices` on the oracle, and serves a small JSON API.
+- `backend/`: Node job that reads the median self-service petrol price around Arezzo (about 10 km) (Ministry Osservaprezzi API) and POL/EUR (CoinGecko), stores them in SQLite, calls `setPrices` on the oracle, and serves a small JSON API.
 - `frontend/`: Vite app that reads the chain and the API.
 
 ## Run everything locally
