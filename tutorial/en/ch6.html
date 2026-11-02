@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>6. Buying and selling · FuelToken</title>
+<title>6. Buying and selling · Petrol Token</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,10 +17,10 @@
 <h2>The arithmetic, with round numbers</h2>
 <p>Suppose petrol costs <strong>2.00 € per litre</strong> and 1 POL is worth <strong>0.10 €</strong>. A litre therefore costs 2.00 ÷ 0.10 = 20 POL, and 1 POL buys one twentieth of a litre:</p>
 <table><tr><th>Operation</th><th>Formula</th><th>Example</th></tr>
-<tr><td>Buy with POL</td><td>FUEL = POL × POLprice ÷ petrolPrice</td><td>1 POL × 0.10 ÷ 2.00 = <strong>0.05 FUEL</strong></td></tr>
-<tr><td>Sell FUEL</td><td>POL = FUEL × petrolPrice ÷ POLprice</td><td>0.05 FUEL × 2.00 ÷ 0.10 = <strong>1 POL</strong></td></tr></table>
-<p>In the contract prices are integers with six decimals (<code>2000000</code> and <code>100000</code>) and amounts are in units of 10<sup>-18</sup>. The arithmetic is identical: <code>10**18 * 100000 / 2000000 = 5 * 10**16</code>, that is 0.05 FUEL. Integer division <strong>rounds down</strong>, so a round trip never makes something out of nothing.</p>
-<div class="box"><strong>Analogy.</strong> The contract is a currency exchange with a drawer. When you buy, it puts your POL in the drawer and prints a receipt (the FUEL). When you sell back, it takes the receipt and returns POL from the drawer.</div>
+<tr><td>Buy with POL</td><td>tokens = POL × POLprice ÷ petrolPrice</td><td>1 POL × 0.10 ÷ 2.00 = <strong>0.05 tokens</strong></td></tr>
+<tr><td>Sell tokens</td><td>POL = tokens × petrolPrice ÷ POLprice</td><td>0.05 tokens × 2.00 ÷ 0.10 = <strong>1 POL</strong></td></tr></table>
+<p>In the contract prices are integers with six decimals (<code>2000000</code> and <code>100000</code>) and amounts are in units of 10<sup>-18</sup>. The arithmetic is identical: <code>10**18 * 100000 / 2000000 = 5 * 10**16</code>, that is 0.05 tokens. Integer division <strong>rounds down</strong>, so a round trip never makes something out of nothing.</p>
+<div class="box"><strong>Analogy.</strong> The contract is a currency exchange with a drawer. When you buy, it puts your POL in the drawer and prints a receipt (the tokens). When you sell back, it takes the receipt and returns POL from the drawer.</div>
 <pre><code>contract FuelToken is ERC20 {
     FuelPriceOracle public immutable oracle;
     uint64 public maxAge = 3 days;
@@ -52,12 +52,12 @@
         (p,) = oracle.polPrice();
     }
 }</code></pre>
-<ul><li><code>oracle</code> is the address of the chapter 4 oracle, fixed at publication (<code>immutable</code>); <code>maxAge</code> is the maximum age of the data, 3 days.</li><li><code>buy()</code> is <code>payable</code>: it accepts POL. <code>msg.value</code> is how much POL came with the call.</li><li><code>_mint</code> creates new FUEL for the caller (<code>msg.sender</code>): the formula from the table.</li><li><code>sell</code> computes the POL owed and checks the drawer holds enough.</li><li><code>_burn</code> destroys the returned FUEL and <code>transfer</code> sends the POL to the seller.</li><li><code>reserve()</code> shows the contract's POL balance, that is, the drawer.</li><li><code>_prices()</code> refuses everything if the oracle is not fresh, then reads the two prices.</li></ul>
+<ul><li><code>oracle</code> is the address of the chapter 4 oracle, fixed at publication (<code>immutable</code>); <code>maxAge</code> is the maximum age of the data, 3 days.</li><li><code>buy()</code> is <code>payable</code>: it accepts POL. <code>msg.value</code> is how much POL came with the call.</li><li><code>_mint</code> creates new tokens for the caller (<code>msg.sender</code>): the formula from the table.</li><li><code>sell</code> computes the POL owed and checks the drawer holds enough.</li><li><code>_burn</code> destroys the returned tokens and <code>transfer</code> sends the POL to the seller.</li><li><code>reserve()</code> shows the contract's POL balance, that is, the drawer.</li><li><code>_prices()</code> refuses everything if the oracle is not fresh, then reads the two prices.</li></ul>
 <p>The full project adds preview functions (<code>quoteBuy</code>, <code>quoteSell</code>) to show the result before signing, an emergency pause, clearer custom errors, and a check that the POL payment succeeds.</p>
 <h2>Why a reserve</h2>
-<p>FUEL in circulation are promises to give POL back. If the drawer is empty, <code>sell</code> must fail instead of inventing coin: that is the <code>reserve too low</code> check. In this demo the reserve is made of the POL paid by buyers; a rising price can leave the drawer short. It is a property worth knowing, and the reason a real product has far stricter rules (see the FAQ).</p>
-<div class="try"><h2>Try it</h2><p>Redo the arithmetic with other numbers: petrol at 1.80 € and POL at 0.09 €. How many FUEL do you get for 2 POL? (2 × 0.09 ÷ 1.80 = 0.10 FUEL.) Then work out how much POL you get back selling them.</p></div>
-<div class="learned"><h2>What you learned</h2><ul><li>Buying is POL × POLprice ÷ petrolPrice; selling is the inverse proportion.</li><li>With petrol at 2.00 € and POL at 0.10 €, 1 POL is 0.05 FUEL.</li><li>The POL reserve is the drawer that makes selling back possible: if empty, <code>sell</code> stops.</li></ul></div>
+<p>Tokens in circulation are promises to give POL back. If the drawer is empty, <code>sell</code> must fail instead of inventing coin: that is the <code>reserve too low</code> check. In this demo the reserve is made of the POL paid by buyers; a rising price can leave the drawer short. It is a property worth knowing, and the reason a real product has far stricter rules (see the FAQ).</p>
+<div class="try"><h2>Try it</h2><p>Redo the arithmetic with other numbers: petrol at 1.80 € and POL at 0.09 €. How many tokens do you get for 2 POL? (2 × 0.09 ÷ 1.80 = 0.10 tokens.) Then work out how much POL you get back selling them.</p></div>
+<div class="learned"><h2>What you learned</h2><ul><li>Buying is POL × POLprice ÷ petrolPrice; selling is the inverse proportion.</li><li>With petrol at 2.00 € and POL at 0.10 €, 1 POL is 0.05 tokens.</li><li>The POL reserve is the drawer that makes selling back possible: if empty, <code>sell</code> stops.</li></ul></div>
 
 <div class="nav"><a href="ch5.html">&larr; The token with OpenZeppelin</a><a href="index.html">Contents</a><a href="ch7.html">The program that brings the price every morning &rarr;</a></div>
 </main>

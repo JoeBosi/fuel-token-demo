@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>6. Comprare e vendere · FuelToken</title>
+<title>6. Comprare e vendere · Token Benzina</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,10 +17,10 @@
 <h2>Il conto, con numeri tondi</h2>
 <p>Supponiamo che la benzina costi <strong>2,00 € al litro</strong> e che 1 POL valga <strong>0,10 €</strong>. Un litro costa quindi 2,00 ÷ 0,10 = 20 POL, e 1 POL compra un ventesimo di litro:</p>
 <table><tr><th>Operazione</th><th>Formula</th><th>Esempio</th></tr>
-<tr><td>Compro con POL</td><td>FUEL = POL × prezzoPOL ÷ prezzoBenzina</td><td>1 POL × 0,10 ÷ 2,00 = <strong>0,05 FUEL</strong></td></tr>
-<tr><td>Vendo FUEL</td><td>POL = FUEL × prezzoBenzina ÷ prezzoPOL</td><td>0,05 FUEL × 2,00 ÷ 0,10 = <strong>1 POL</strong></td></tr></table>
-<p>Nel contratto i prezzi sono interi con sei decimali (<code>2000000</code> e <code>100000</code>) e le quantità sono in unità da 10<sup>-18</sup>. Il conto è identico: <code>10**18 * 100000 / 2000000 = 5 * 10**16</code>, cioè 0,05 FUEL. La divisione tra interi <strong>arrotonda per difetto</strong>, quindi andata e ritorno non fanno mai guadagnare qualcosa dal nulla.</p>
-<div class="box"><strong>Analogia.</strong> Il contratto è un cambiavalute con un cassetto. Quando compri, mette i tuoi POL nel cassetto e ti stampa una ricevuta (i FUEL). Quando rivendi, ritira la ricevuta e ti ridà i POL dal cassetto.</div>
+<tr><td>Compro con POL</td><td>token = POL × prezzoPOL ÷ prezzoBenzina</td><td>1 POL × 0,10 ÷ 2,00 = <strong>0,05 token</strong></td></tr>
+<tr><td>Vendo token</td><td>POL = token × prezzoBenzina ÷ prezzoPOL</td><td>0,05 token × 2,00 ÷ 0,10 = <strong>1 POL</strong></td></tr></table>
+<p>Nel contratto i prezzi sono interi con sei decimali (<code>2000000</code> e <code>100000</code>) e le quantità sono in unità da 10<sup>-18</sup>. Il conto è identico: <code>10**18 * 100000 / 2000000 = 5 * 10**16</code>, cioè 0,05 token. La divisione tra interi <strong>arrotonda per difetto</strong>, quindi andata e ritorno non fanno mai guadagnare qualcosa dal nulla.</p>
+<div class="box"><strong>Analogia.</strong> Il contratto è un cambiavalute con un cassetto. Quando compri, mette i tuoi POL nel cassetto e ti stampa una ricevuta (i token). Quando rivendi, ritira la ricevuta e ti ridà i POL dal cassetto.</div>
 <pre><code>contract FuelToken is ERC20 {
     FuelPriceOracle public immutable oracle;
     uint64 public maxAge = 3 days;
@@ -52,12 +52,12 @@
         (p,) = oracle.polPrice();
     }
 }</code></pre>
-<ul><li><code>oracle</code> è l'indirizzo dell'oracolo del capitolo 4, fissato alla pubblicazione (<code>immutable</code>); <code>maxAge</code> è l'età massima del dato, 3 giorni.</li><li><code>buy()</code> è <code>payable</code>: accetta POL. <code>msg.value</code> è quanti POL sono arrivati con la chiamata.</li><li><code>_mint</code> crea nuovi FUEL a favore di chi chiama (<code>msg.sender</code>): è la formula della tabella.</li><li><code>sell</code> calcola i POL dovuti e controlla che nel cassetto ce ne siano abbastanza.</li><li><code>_burn</code> distrugge i FUEL restituiti e <code>transfer</code> invia i POL a chi vende.</li><li><code>reserve()</code> mostra il saldo in POL del contratto, cioè il cassetto.</li><li><code>_prices()</code> rifiuta tutto se l'oracolo non è fresco, poi legge i due prezzi.</li></ul>
+<ul><li><code>oracle</code> è l'indirizzo dell'oracolo del capitolo 4, fissato alla pubblicazione (<code>immutable</code>); <code>maxAge</code> è l'età massima del dato, 3 giorni.</li><li><code>buy()</code> è <code>payable</code>: accetta POL. <code>msg.value</code> è quanti POL sono arrivati con la chiamata.</li><li><code>_mint</code> crea nuovi token a favore di chi chiama (<code>msg.sender</code>): è la formula della tabella.</li><li><code>sell</code> calcola i POL dovuti e controlla che nel cassetto ce ne siano abbastanza.</li><li><code>_burn</code> distrugge i token restituiti e <code>transfer</code> invia i POL a chi vende.</li><li><code>reserve()</code> mostra il saldo in POL del contratto, cioè il cassetto.</li><li><code>_prices()</code> rifiuta tutto se l'oracolo non è fresco, poi legge i due prezzi.</li></ul>
 <p>Il progetto completo aggiunge funzioni di anteprima (<code>quoteBuy</code>, <code>quoteSell</code>) per mostrare il risultato prima di firmare, una pausa di emergenza, errori personalizzati più chiari e il controllo che il pagamento in POL vada a buon fine.</p>
 <h2>Perché una riserva</h2>
-<p>I FUEL in circolazione sono promesse di restituire POL. Se il cassetto è vuoto, <code>sell</code> deve fallire invece di inventare moneta: per questo il controllo <code>reserve too low</code>. In questa demo la riserva è fatta dai POL di chi compra; un prezzo che sale può rendere il cassetto insufficiente. È una proprietà da conoscere, ed è il motivo per cui un prodotto reale ha regole molto più severe (vedi le domande frequenti).</p>
-<div class="try"><h2>Prova tu</h2><p>Rifai il conto con altri numeri: benzina a 1,80 € e POL a 0,09 €. Quanti FUEL ottieni con 2 POL? (2 × 0,09 ÷ 1,80 = 0,10 FUEL.) Poi calcola quanti POL rivedi vendendoli.</p></div>
-<div class="learned"><h2>Cosa hai imparato</h2><ul><li>Comprare è POL × prezzoPOL ÷ prezzoBenzina; vendere è la proporzione inversa.</li><li>Con benzina 2,00 € e POL 0,10 €, 1 POL vale 0,05 FUEL.</li><li>La riserva di POL è il cassetto che permette di rivendere: se è vuoto, <code>sell</code> si ferma.</li></ul></div>
+<p>I token in circolazione sono promesse di restituire POL. Se il cassetto è vuoto, <code>sell</code> deve fallire invece di inventare moneta: per questo il controllo <code>reserve too low</code>. In questa demo la riserva è fatta dai POL di chi compra; un prezzo che sale può rendere il cassetto insufficiente. È una proprietà da conoscere, ed è il motivo per cui un prodotto reale ha regole molto più severe (vedi le domande frequenti).</p>
+<div class="try"><h2>Prova tu</h2><p>Rifai il conto con altri numeri: benzina a 1,80 € e POL a 0,09 €. Quanti token ottieni con 2 POL? (2 × 0,09 ÷ 1,80 = 0,10 token.) Poi calcola quanti POL rivedi vendendoli.</p></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>Comprare è POL × prezzoPOL ÷ prezzoBenzina; vendere è la proporzione inversa.</li><li>Con benzina 2,00 € e POL 0,10 €, 1 POL vale 0,05 token.</li><li>La riserva di POL è il cassetto che permette di rivendere: se è vuoto, <code>sell</code> si ferma.</li></ul></div>
 
 <div class="nav"><a href="ch5.html">&larr; Il token con OpenZeppelin</a><a href="index.html">Indice</a><a href="ch7.html">Il programma che porta il prezzo ogni mattina &rarr;</a></div>
 </main>

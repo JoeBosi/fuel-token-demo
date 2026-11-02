@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Costruisci la tua versione base · FuelToken</title>
+<title>Costruisci la tua versione base · Token Benzina</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,8 +11,8 @@
 <div class="top"><a href="https://www.giuseppebosi.com">Prof. Giuseppe Bosi</a>
 <a class="lang" href="../en/build.html" hreflang="en" lang="en"><svg class="flag" viewBox="0 0 60 30" width="24" height="12" aria-hidden="true"><clipPath id="u"><path d="M0 0h60v30H0z"/></clipPath><g clip-path="url(#u)"><path d="M0 0h60v30H0z" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></g></svg><span>EN</span></a></div></div>
 <main>
-<p class="kicker">Extra</p><h1>Costruisci la tua versione base di FuelToken</h1>
-<div class="goal"><strong>Obiettivo.</strong> Partire da una cartella vuota e arrivare a un FuelToken ridotto ma funzionante: un contratto che conserva il prezzo della benzina, un token che si compra e si vende in POL, un programma che porta il prezzo vero e una pagina web collegata a MetaMask. Tutto sul tuo computer, senza chiavi vere e senza spendere nulla.</div>
+<p class="kicker">Extra</p><h1>Costruisci la tua versione base di Token Benzina</h1>
+<div class="goal"><strong>Obiettivo.</strong> Partire da una cartella vuota e arrivare a un Token Benzina ridotto ma funzionante: un contratto che conserva il prezzo della benzina, un token che si compra e si vende in POL, un programma che porta il prezzo vero e una pagina web collegata a MetaMask. Tutto sul tuo computer, senza chiavi vere e senza spendere nulla.</div>
 <div class="box"><strong>Dimostrazione didattica su rete di prova: i token non hanno alcun valore reale.</strong> Questa è una versione di massima: non ha pausa, commissioni, permessi sul token né controlli di sicurezza. Il codice completo si trova anche nella cartella <code>fuel/starter/</code> del progetto, da copiare.</div>
 <h2>Cosa ti serve</h2>
 <ul><li><strong>Node.js 22</strong> (il motore che esegue programmi JavaScript fuori dal browser). Con <code>node -v</code> deve rispondere <code>v22</code> o più recente.</li><li>Un terminale e un editor di testo.</li><li>Per l'ultimo passo, il browser con l'estensione MetaMask (capitolo 3).</li></ul>
@@ -111,7 +111,7 @@ contract SimpleFuelOracle is AccessControl {
     }
 }</code></pre>
 <h3>Il token</h3>
-<p>È un ERC-20 di OpenZeppelin con due funzioni in più. <code>buy</code> riceve POL e crea FUEL; <code>sell</code> distrugge FUEL e restituisce POL, sempre al prezzo dell'oracolo. 1 FUEL (18 decimali) vale un litro.</p>
+<p>È un ERC-20 di OpenZeppelin con due funzioni in più. <code>buy</code> riceve POL e crea token; <code>sell</code> distrugge token e restituisce POL, sempre al prezzo dell'oracolo. 1 token (18 decimali) vale un litro.</p>
 <p class="fname"><code>contracts/SimpleFuelToken.sol</code></p>
 <pre><code>// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -393,7 +393,7 @@ Is fresh: true</code></pre>
 <p>Il servizio del Ministero non ha un contratto di stabilità: può cambiare formato o limitare l'accesso. In quel caso il programma si ferma con un errore e non scrive nulla.</p>
 
 <h2>6. La pagina web con MetaMask</h2>
-<p>Una sola pagina che legge il prezzo dall'oracolo e permette di collegare MetaMask e comprare FUEL. Usa <strong>Vite</strong> (un programma che prepara le pagine web) e <strong>viem</strong> (una libreria per parlare con la blockchain dal browser). Il file <code>web/src/deployment.json</code> è stato scritto dal programma di pubblicazione.</p>
+<p>Una sola pagina che legge il prezzo dall'oracolo e permette di collegare MetaMask e comprare token. Usa <strong>Vite</strong> (un programma che prepara le pagine web) e <strong>viem</strong> (una libreria per parlare con la blockchain dal browser). Il file <code>web/src/deployment.json</code> è stato scritto dal programma di pubblicazione.</p>
 <p class="fname"><code>web/package.json</code></p>
 <pre><code>{
   &quot;name&quot;: &quot;fuel-web&quot;,
@@ -513,7 +513,7 @@ npm run dev</code></pre>
 <p>Apri l'indirizzo che Vite stampa (di solito <code>http://localhost:5173/</code>). Deve comparire il prezzo scritto al passo 5. Per comprare davvero con MetaMask, aggiungi la rete locale (nome <code>Hardhat</code>, RPC <code>http://127.0.0.1:8545</code>, Chain ID <code>31337</code>, simbolo <code>ETH</code>) e importa una chiave di prova stampata da <code>npx hardhat node</code>; la pagina chiede da sola di cambiare rete. Se hai pubblicato su Amoy, la pagina usa Amoy.</p>
 <p>Per usare la pagina con Amoy servono due cose: aver eseguito <code>deploy.js --network amoy</code> (che riscrive gli indirizzi) e aver lanciato <code>update-price.js --network amoy</code>.</p>
 
-<div class="try"><h2>Prova tu</h2><p>Dopo aver comprato 0,1 POL di FUEL dalla pagina, scrivi un tuo test che chiama <code>sell</code> con metà del saldo e controlla che il saldo di POL salga della cifra giusta. Poi cambia <code>MAX_AGE</code> nel token e guarda quale test si rompe.</p></div>
+<div class="try"><h2>Prova tu</h2><p>Dopo aver comprato 0,1 POL di token dalla pagina, scrivi un tuo test che chiama <code>sell</code> con metà del saldo e controlla che il saldo di POL salga della cifra giusta. Poi cambia <code>MAX_AGE</code> nel token e guarda quale test si rompe.</p></div>
 
 <h2>Cosa abbiamo verificato davvero / cosa no</h2>
 <div class="box built"><p><strong>Verificato il 2 novembre 2026, su un VPS Linux con Node 22.23, ripetendo da zero in una cartella pulita i comandi e il codice di questa pagina (il codice mostrato è letto dai file eseguiti):</strong></p><ul>
@@ -521,7 +521,7 @@ npm run dev</code></pre>
 <li>6 test su 6 superati (risultato riportato sopra);</li>
 <li>pubblicazione sulla rete locale Hardhat: riuscita, indirizzi come sopra;</li>
 <li>lettura del prezzo vero dall'API Osservaprezzi (mediana di 42 distributori intorno ad Arezzo) e scrittura sull'oracolo locale: riuscite, con lettura di ritorno e <code>isFresh</code> vero;</li>
-<li>pagina web: la compilazione con Vite riesce, e in un browser automatico la pagina legge il prezzo dall'oracolo, si collega a un portafoglio e acquista FUEL sulla rete locale (saldo aggiornato).</li></ul>
+<li>pagina web: la compilazione con Vite riesce, e in un browser automatico la pagina legge il prezzo dall'oracolo, si collega a un portafoglio e acquista token sulla rete locale (saldo aggiornato).</li></ul>
 <p><strong>Non verificato:</strong></p><ul>
 <li>la pubblicazione su Polygon Amoy con chiavi proprie, che non è stata rieseguita da chi scrive con questo codice: richiede un portafoglio di prova e POL del faucet;</li>
 <li>l'uso con MetaMask vero (installato nel browser): la prova automatica ha usato un portafoglio simulato collegato alla rete locale, e la richiesta di cambio rete di MetaMask non è stata provata;</li>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>5. Il token con OpenZeppelin · FuelToken</title>
+<title>5. Il token con OpenZeppelin · Token Benzina</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,10 +23,10 @@ contract FuelToken is ERC20 {
 <ul><li><code>import</code> porta nel tuo file il contratto <code>ERC20</code> di OpenZeppelin.</li><li><code>contract FuelToken is ERC20</code> significa che il tuo contratto <em>eredita</em> tutto ciò che sa fare un ERC-20.</li><li><code>ERC20("FuelToken", "FUEL")</code> dà il nome e la sigla alla moneta.</li><li>Il corpo <code>{}</code> è vuoto: non servono altre istruzioni per avere saldi e trasferimenti.</li></ul>
 <h2>I decimali</h2>
 <p>Come per i prezzi, la blockchain lavora con numeri interi. Per rappresentare frazioni di token, ERC-20 usa <code>decimals</code>, di solito <strong>18</strong>: il saldo scritto nel contratto è il numero di token moltiplicato per 10<sup>18</sup>. Quindi <code>1000000000000000000</code> significa «1 token» e <code>500000000000000000</code> significa «mezzo token».</p>
-<p>Nel nostro progetto <strong>1 token FUEL = 1 litro</strong>: avere 0,5 FUEL significa «mezzo litro» sulla carta. Come il centesimo è la parte più piccola dell'euro, qui la parte più piccola è un miliardesimo di miliardesimo di litro.</p>
+<p>Nel nostro progetto <strong>1 token = 1 litro</strong>: avere 0,5 token significa «mezzo litro» sulla carta. Come il centesimo è la parte più piccola dell'euro, qui la parte più piccola è un miliardesimo di miliardesimo di litro.</p>
 <p>Questo contratto per ora non crea nessun token: lo farà <code>buy()</code> nel prossimo capitolo.</p>
-<div class="try"><h2>Prova tu</h2><p>Calcola a mano: quanti «pezzetti» (unità più piccole) sono 2,5 FUEL? (Risposta: 2.500.000.000.000.000.000, cioè 2,5 × 10<sup>18</sup>.) Poi scrivi quanti pezzetti corrispondono a un decilitro, cioè 0,1 FUEL.</p></div>
-<div class="learned"><h2>Cosa hai imparato</h2><ul><li>ERC-20 è lo standard comune dei token; OpenZeppelin ne offre una versione sicura.</li><li>Ereditando da <code>ERC20</code> bastano tre righe per avere un token.</li><li>Con 18 decimali il saldo è il numero di token per 10<sup>18</sup>; per noi 1 FUEL è 1 litro.</li></ul></div>
+<div class="try"><h2>Prova tu</h2><p>Calcola a mano: quanti «pezzetti» (unità più piccole) sono 2,5 token? (Risposta: 2.500.000.000.000.000.000, cioè 2,5 × 10<sup>18</sup>.) Poi scrivi quanti pezzetti corrispondono a un decilitro, cioè 0,1 token.</p></div>
+<div class="learned"><h2>Cosa hai imparato</h2><ul><li>ERC-20 è lo standard comune dei token; OpenZeppelin ne offre una versione sicura.</li><li>Ereditando da <code>ERC20</code> bastano tre righe per avere un token.</li><li>Con 18 decimali il saldo è il numero di token per 10<sup>18</sup>; per noi 1 token è 1 litro.</li></ul></div>
 <h2>Per approfondire</h2><ul><li><a href="https://docs.openzeppelin.com/contracts/5.x/erc20">OpenZeppelin: ERC-20</a></li></ul>
 <div class="nav"><a href="ch4.html">&larr; Il contratto del prezzo</a><a href="index.html">Indice</a><a href="ch6.html">Comprare e vendere &rarr;</a></div>
 </main>

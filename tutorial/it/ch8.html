@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>8. La pagina web e MetaMask · FuelToken</title>
+<title>8. La pagina web e MetaMask · Token Benzina</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,7 +32,7 @@ const token = new Contract(TOKEN_ADDRESS, abi, signer);
 const fuel = await token.quoteBuy(parseEther(&quot;1&quot;));
 const tx = await token.buy({ value: parseEther(&quot;1&quot;) });
 await tx.wait();</code></pre>
-<ul><li><code>BrowserProvider</code> collega la libreria al portafoglio nel browser (<code>window.ethereum</code>).</li><li><code>eth_requestAccounts</code> fa comparire la finestra di MetaMask: l'utente sceglie se collegarsi.</li><li><code>getSigner</code> è «chi firma»: l'account collegato.</li><li><code>abi</code> elenca le due funzioni usate; <code>token</code> unisce indirizzo, elenco e firmatario.</li><li><code>quoteBuy</code> è una lettura: restituisce i FUEL che otterresti, senza firmare.</li><li><code>token.buy({ value: ... })</code> è una scrittura: invia 1 POL (<code>parseEther</code> lo converte in unità da 10<sup>-18</sup>) e MetaMask chiede conferma.</li><li><code>tx.wait()</code> aspetta che la transazione entri in un blocco.</li></ul>
+<ul><li><code>BrowserProvider</code> collega la libreria al portafoglio nel browser (<code>window.ethereum</code>).</li><li><code>eth_requestAccounts</code> fa comparire la finestra di MetaMask: l'utente sceglie se collegarsi.</li><li><code>getSigner</code> è «chi firma»: l'account collegato.</li><li><code>abi</code> elenca le due funzioni usate; <code>token</code> unisce indirizzo, elenco e firmatario.</li><li><code>quoteBuy</code> è una lettura: restituisce i token che otterresti, senza firmare.</li><li><code>token.buy({ value: ... })</code> è una scrittura: invia 1 POL (<code>parseEther</code> lo converte in unità da 10<sup>-18</sup>) e MetaMask chiede conferma.</li><li><code>tx.wait()</code> aspetta che la transazione entri in un blocco.</li></ul>
 <p>Il progetto usa le librerie wagmi e viem, più comode in un'app React, ma il meccanismo è lo stesso. La pagina del progetto si occupa anche di proporre il cambio di rete verso Polygon Amoy, e senza portafoglio mostra comunque prezzi e storico.</p>
 <div class="try"><h2>Prova tu</h2><p>Apri la console del browser (F12) su una pagina qualsiasi con MetaMask installato e scrivi <code>typeof window.ethereum</code>: se risponde <code>"object"</code>, la pagina può parlare con il tuo portafoglio.</p></div>
 <div class="learned"><h2>Cosa hai imparato</h2><ul><li>La pagina non ha la tua chiave: chiede, e MetaMask firma dopo la tua conferma.</li><li>Leggere è gratis e non serve firmare; scrivere cambia lo stato e richiede firma e commissione.</li><li><code>window.ethereum</code> è il ponte tra pagina e portafoglio.</li></ul></div>

@@ -43,6 +43,7 @@ export function Layout() {
       <footer className="border-t border-slate-200 bg-white px-4 py-8 text-center text-xs text-slate-600">
         <p><a className="underline" href="https://www.giuseppebosi.com">{t('footer')}</a></p>
         <p className="mt-2">{t('disclaimer')}</p>
+        <p className="mt-2 text-xs text-slate-600">{t('chainName')}</p>
       </footer>
     </div>
   )

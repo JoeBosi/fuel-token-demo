@@ -39,7 +39,8 @@ export default function Home() {
               {price.data && (
                 <>
                   <p className="mt-1 text-5xl font-extrabold tabular-nums">{formatEur(price.data.fuel_eur, locale, 3)}<span className="text-xl font-semibold text-slate-600"> /L</span></p>
-                  <p className="mt-1 text-sm text-slate-700">{formatDate(price.data.date)} · {price.data.n_stations} {t('s1Stations')}</p>
+                  <p className="mt-1 text-base font-medium text-slate-800">{t('priceCap').replace('{n}', String(price.data.n_stations))}</p>
+                  <p className="mt-1 text-sm text-slate-700">{formatDate(price.data.date)}</p>
                 </>
               )}
             </div>

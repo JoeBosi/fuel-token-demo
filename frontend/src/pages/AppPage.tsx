@@ -177,7 +177,7 @@ function BuyCard() {
         <input inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="0.1" className="mt-1 w-full min-h-12 rounded-xl border-2 border-slate-300 px-3 py-2 text-lg" />
       </label>
       <p className="mt-3 text-sm text-slate-700">{t('buyPreview')}</p>
-      <Big>{quote.data !== undefined ? `${formatFuel(quote.data as bigint, locale)} FUEL` : '-'}</Big>
+      <Big>{quote.data !== undefined ? `${formatFuel(quote.data as bigint, locale)} ${t('unit')}` : '-'}</Big>
       {quote.isError && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{t(errorKey(quote.error))}</p>}
       {err && <p className="mt-1 text-sm font-medium text-red-800" role="alert">{err}</p>}
       <button className="mt-4 min-h-12 w-full rounded-xl bg-emerald-700 px-4 py-3 text-base font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
@@ -259,7 +259,7 @@ function HistoryCard() {
           {q.data.map((o) => (
             <li key={`${o.hash}-${o.idx}`} className="flex flex-wrap items-center justify-between gap-2 py-2">
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${o.kind === 'buy' ? 'bg-emerald-100 text-emerald-900' : 'bg-rose-100 text-rose-900'}`}>{o.kind === 'buy' ? t('histBought') : t('histSold')}</span>
-              <span className="tabular-nums">{formatFuel(o.fuel, locale)} FUEL {o.kind === 'buy' ? '←' : '→'} {formatPol(o.pol, locale, 6)} POL</span>
+              <span className="tabular-nums">{formatFuel(o.fuel, locale)} {t('unit')} {o.kind === 'buy' ? '←' : '→'} {formatPol(o.pol, locale, 6)} POL</span>
               {explorerTx(o.hash)
                 ? <a className="py-1 font-semibold text-amber-800 underline" href={explorerTx(o.hash)!} target="_blank" rel="noreferrer">Polygonscan</a>
                 : <span className="font-mono text-xs text-slate-500">{o.hash.slice(0, 10)}...</span>}
