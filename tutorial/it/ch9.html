@@ -68,6 +68,21 @@ await oracle.grantRole(await oracle.UPDATER_ROLE(), UPDATER_ADDRESS);</code></pr
 </ol>
 <p>Se un acquisto fallisce con «prezzo vecchio», l'oracolo non è fresco: lancia di nuovo il programma del capitolo 7.</p>
 <p>Un consiglio finale: fai prima un giro completo sulla rete locale di Hardhat (<code>npx hardhat node</code>), dove gli errori costano zero e tutto è veloce.</p>
+<!-- tryit:start --><div class="tryit"><h2>Provalo subito</h2><p>Controlla dal vivo i contratti già pubblicati su Amoy: apri il prezzo in JSON oppure leggi direttamente l'oracolo su Polygonscan (sezione «Read Contract», funzione <code>fuelPrice</code>).</p><p class="btns"><a class="btn" href="https://rwa-fuel.blockchain.giuseppebosi.com/api/price" target="_blank" rel="noopener">Vedi il prezzo (JSON)</a><a class="btn" href="https://rwa-fuel.blockchain.giuseppebosi.com/api/history?days=30" target="_blank" rel="noopener">Storico 30 giorni (JSON)</a><a class="btn" href="https://amoy.polygonscan.com/address/0xf30D07696476e97103730BE0dFb55045945409D8#readContract" target="_blank" rel="noopener">Leggi l'oracolo su Polygonscan</a></p></div><!-- tryit:end --><div class="see"><h3>Cosa dovresti vedere</h3><pre><code>{
+    &quot;date&quot;: &quot;2026-11-02&quot;,
+    &quot;fuel_eur&quot;: 1.99,
+    &quot;pol_eur&quot;: 0.080126,
+    &quot;n_stations&quot;: 42,
+    &quot;source&quot;: &quot;MIMIT Osservaprezzi Carburanti (median, self petrol)&quot;,
+    &quot;fetched_at&quot;: &quot;2026-11-02T07:30:20.795Z&quot;,
+    &quot;tx_hash&quot;: &quot;0x325bba0d1b2390ea093f2e023680b951e3808200417f9d8a450167b9148a7881&quot;,
+    &quot;oracle&quot;: {
+        &quot;fuel&quot;: 1.99,
+        &quot;pol&quot;: 0.080126,
+        &quot;updatedAt&quot;: 1793604622,
+        &quot;fresh&quot;: true
+    }
+}</code></pre></div>
 <div class="box built"><h2>Cosa abbiamo costruito</h2><ul><li><code>FuelPriceOracle.sol</code> su Polygon Amoy (Chain ID 80002): <a href="https://amoy.polygonscan.com/address/0xf30D07696476e97103730BE0dFb55045945409D8"><code>0xf30D07696476e97103730BE0dFb55045945409D8</code></a></li><li><code>FuelToken.sol</code> su Polygon Amoy (Chain ID 80002): <a href="https://amoy.polygonscan.com/address/0x87eAE9eF4A2dD56D04b4798bA9Bc7B777E70c9ac"><code>0x87eAE9eF4A2dD56D04b4798bA9Bc7B777E70c9ac</code></a></li></ul><p>Il programma del capitolo 7 è il backend del progetto e la pagina del capitolo 8 il suo frontend. Sono contratti di una rete di prova: i token e le monete non hanno valore.</p><p><strong>Codice sorgente.</strong> Il codice completo è disponibile su richiesta.</p></div><div class="try"><h2>Prova tu</h2><p>Pubblica solo l'oracolo su Amoy, apri il suo indirizzo su Polygonscan e individua la scheda «Contract». Poi chiama da Remix o dall'esploratore la funzione <code>isFresh</code>: prima del primo aggiornamento deve rispondere falso.</p></div>
 <div class="learned"><h2>Cosa hai imparato</h2><ul><li>Pubblicare significa dare ai contratti un indirizzo pubblico sulla rete.</li><li>Le chiavi di prova stanno in un file <code>.env</code> che non si condivide.</li><li>Verificare su Polygonscan rende leggibile a tutti il codice che gira.</li></ul></div>
 <h2>Per approfondire</h2><ul><li><a href="https://hardhat.org/docs">Hardhat: documentazione</a></li><li><a href="https://docs.polygon.technology/">Documentazione Polygon</a></li></ul>

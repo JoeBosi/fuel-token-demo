@@ -12,7 +12,9 @@ const abi = [
 ];
 
 const $ = (id) => document.getElementById(id);
-const publicClient = createPublicClient({ chain, transport: http() });
+// Amoy: use a public RPC address that answers anyone; the local Hardhat chain uses the default address.
+const RPC = chain.id === 80002 ? "https://polygon-amoy-bor-rpc.publicnode.com" : undefined;
+const publicClient = createPublicClient({ chain, transport: http(RPC) });
 let walletClient;
 let account;
 

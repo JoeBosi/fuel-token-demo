@@ -9,3 +9,5 @@ Un concept a titolo didattico: un token su rete di prova che vale un litro di be
 - **Versione inglese e istruzioni di avvio:** [README.md](README.md)
 - **Autore:** Prof. Giuseppe Bosi, https://www.giuseppebosi.com , https://www.linkedin.com/in/giuseppebosi
 - **Licenza:** MIT (vedi [LICENSE](LICENSE)).
+
+- **Notebook (Google Colab, Python, senza chiavi):** `notebooks/` (i pulsanti "Apri in Colab" sono nelle pagine del tutorial).

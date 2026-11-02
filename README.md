@@ -8,6 +8,7 @@ An educational concept: a test-network token worth one litre of petrol, with the
 - **Tutorial (IT/EN):** https://rwa-fuel.blockchain.giuseppebosi.com/tutorial/
 - **Verified contracts:** see the Sourcify section at the end.
 - **Italian version:** [README.it.md](README.it.md)
+- **Notebooks (Google Colab, Python, no keys):** `notebooks/` (see the tutorial pages for the "Open in Colab" buttons).
 - `starter/` has a minimal, working version you can build from scratch (see the tutorial, part "Build your own").
 - **Author:** Prof. Giuseppe Bosi, https://www.giuseppebosi.com , https://www.linkedin.com/in/giuseppebosi
 - **License:** MIT (see [LICENSE](LICENSE)).

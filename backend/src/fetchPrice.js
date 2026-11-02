@@ -37,7 +37,7 @@ export function todayRome(now = new Date()) {
 export async function fetchFuel({ lat = config.lat, lng = config.lng, radiusKm = config.radiusKm } = {}) {
   const res = await fetch(ZONE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; educational-demo)' },
     body: JSON.stringify({ points: [{ lat, lng }], radius: radiusKm, fuelType: '1-x', priceOrder: 'asc' }),
     signal: AbortSignal.timeout(30000),
   });
@@ -48,7 +48,7 @@ export async function fetchFuel({ lat = config.lat, lng = config.lng, radiusKm =
 }
 
 export async function fetchPol() {
-  const res = await fetch(COINGECKO_URL, { signal: AbortSignal.timeout(20000) });
+  const res = await fetch(COINGECKO_URL, { headers: { Accept: 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; educational-demo)' }, signal: AbortSignal.timeout(20000) });
   if (!res.ok) throw new Error(`CoinGecko HTTP ${res.status}`);
   const eur = (await res.json())?.['polygon-ecosystem-token']?.eur;
   if (!(eur > 0)) throw new Error('CoinGecko: missing price');

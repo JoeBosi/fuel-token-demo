@@ -62,3 +62,12 @@ footer a{color:inherit;text-decoration:underline}
 .xlinks{margin:8px 0 0}
 
 footer a,.xlinks a{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}footer{text-align:center}.xlinks{display:flex;flex-wrap:wrap;justify-content:center;gap:0 6px}
+
+.tryit{background:#fff;border:2px solid #0b5cad;border-left-width:6px;border-radius:6px;padding:10px 16px;margin:18px 0}
+.tryit h2{margin:.1em 0 .3em;font-size:1.1rem;color:#0b5cad}
+.tryit .btns{margin:.6em 0}
+.btn{display:inline-block;background:#0b5cad;color:#fff!important;padding:12px 20px;border-radius:6px;font-weight:700;text-decoration:none!important;margin:4px 8px 4px 0;font-size:1.05rem;min-height:24px}
+.btn:hover,.btn:focus{background:#084a8c}
+.small{font-size:.9rem;color:#33405a}
+.see{background:#f7f9fc;border-left:4px solid #6a7590;padding:8px 14px;margin:12px 0 18px}
+.see h3{margin:.1em 0 .4em;font-size:1rem}

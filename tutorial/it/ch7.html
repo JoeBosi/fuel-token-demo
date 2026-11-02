@@ -64,6 +64,25 @@ await tx.wait();</code></pre>
 <p>Nel progetto il programma parte da solo alle 8:30 (ora di Roma) con un timer. Se la richiesta fallisce, riprova tre volte a dieci minuti l'una dall'altra.</p>
 <h2>Se la fonte non risponde</h2>
 <p>Se il Ministero è irraggiungibile o cambia formato, il programma <strong>non scrive nulla</strong>. Sulla blockchain resta il prezzo di ieri, con la sua data. Dopo 3 giorni, <code>isFresh</code> (capitolo 4) risponde «no» e <code>buy()</code> e <code>sell()</code> si fermano con l'errore «prezzo vecchio». È una scelta voluta: meglio fermarsi che operare su un numero che non rappresenta più la realtà.</p>
+<!-- tryit:start --><div class="tryit"><h2>Provalo subito</h2><p>Il notebook legge il prezzo dal servizio e dall'oracolo su Amoy e li confronta. Il programma che scrive sull'oracolo ha bisogno di una chiave di prova, per questo qui si prova la lettura.</p><p class="btns"><a class="btn" href="https://colab.research.google.com/github/JoeBosi/fuel-token-demo/blob/main/notebooks/fuel_price_oracle_it.ipynb" target="_blank" rel="noopener">Apri il notebook in Colab</a><a class="btn" href="https://rwa-fuel.blockchain.giuseppebosi.com/api/price" target="_blank" rel="noopener">Vedi il prezzo (JSON)</a><a class="btn" href="https://rwa-fuel.blockchain.giuseppebosi.com/api/history?days=30" target="_blank" rel="noopener">Storico 30 giorni (JSON)</a></p><p class="small">Colab richiede un account Google gratuito per eseguire le celle; senza account si legge il notebook con i risultati già salvati.</p></div><!-- tryit:end --><div class="see"><h3>Cosa dovresti vedere</h3><p>Le cifre cambiano ogni giorno; questo è il risultato che abbiamo ottenuto eseguendo il notebook il 2 novembre 2026:</p><pre><code>Connected, chain id: 80002
+On-chain petrol price: 1.99 EUR/L (raw value 1990000)
+Price is fresh (3 days): True
+Off-chain 1.990 vs on-chain 1.990 -&gt; gap 0.000 EUR/L
+Close enough (under 5 cents): True</code></pre><p>I due link JSON si aprono nel browser; il primo mostra qualcosa di simile a:</p><pre><code>{
+    &quot;date&quot;: &quot;2026-11-02&quot;,
+    &quot;fuel_eur&quot;: 1.99,
+    &quot;pol_eur&quot;: 0.080126,
+    &quot;n_stations&quot;: 42,
+    &quot;source&quot;: &quot;MIMIT Osservaprezzi Carburanti (median, self petrol)&quot;,
+    &quot;fetched_at&quot;: &quot;2026-11-02T07:30:20.795Z&quot;,
+    &quot;tx_hash&quot;: &quot;0x325bba0d1b2390ea093f2e023680b951e3808200417f9d8a450167b9148a7881&quot;,
+    &quot;oracle&quot;: {
+        &quot;fuel&quot;: 1.99,
+        &quot;pol&quot;: 0.080126,
+        &quot;updatedAt&quot;: 1793604622,
+        &quot;fresh&quot;: true
+    }
+}</code></pre></div>
 <div class="try"><h2>Prova tu</h2><p>Esegui nel terminale con Node.js la sola funzione <code>median</code> su una lista a tua scelta di 6 numeri (numero pari) e verifica a mano che sia la media dei due centrali.</p></div>
 <div class="learned"><h2>Cosa hai imparato</h2><ul><li>Un contratto non agisce da solo: un programma esterno gli porta il dato a orari fissi.</li><li>La chiave dell'updater firma l'aggiornamento e non si scrive mai nel codice.</li><li>Se la fonte manca, il prezzo diventa «vecchio» e le operazioni si fermano da sole.</li></ul></div>
 

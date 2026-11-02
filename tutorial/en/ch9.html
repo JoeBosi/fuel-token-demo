@@ -68,6 +68,21 @@ await oracle.grantRole(await oracle.UPDATER_ROLE(), UPDATER_ADDRESS);</code></pr
 </ol>
 <p>If a purchase fails with "old price", the oracle is not fresh: run the chapter 7 program again.</p>
 <p>One last tip: do a full run on Hardhat's local network first (<code>npx hardhat node</code>), where mistakes cost nothing and everything is fast.</p>
+<!-- tryit:start --><div class="tryit"><h2>Try it now</h2><p>Check the contracts already deployed on Amoy live: open the price as JSON or read the oracle directly on Polygonscan ("Read Contract" section, function <code>fuelPrice</code>).</p><p class="btns"><a class="btn" href="https://rwa-fuel.blockchain.giuseppebosi.com/api/price" target="_blank" rel="noopener">See the price (JSON)</a><a class="btn" href="https://rwa-fuel.blockchain.giuseppebosi.com/api/history?days=30" target="_blank" rel="noopener">30-day history (JSON)</a><a class="btn" href="https://amoy.polygonscan.com/address/0xf30D07696476e97103730BE0dFb55045945409D8#readContract" target="_blank" rel="noopener">Read the oracle on Polygonscan</a></p></div><!-- tryit:end --><div class="see"><h3>What you should see</h3><pre><code>{
+    &quot;date&quot;: &quot;2026-11-02&quot;,
+    &quot;fuel_eur&quot;: 1.99,
+    &quot;pol_eur&quot;: 0.080126,
+    &quot;n_stations&quot;: 42,
+    &quot;source&quot;: &quot;MIMIT Osservaprezzi Carburanti (median, self petrol)&quot;,
+    &quot;fetched_at&quot;: &quot;2026-11-02T07:30:20.795Z&quot;,
+    &quot;tx_hash&quot;: &quot;0x325bba0d1b2390ea093f2e023680b951e3808200417f9d8a450167b9148a7881&quot;,
+    &quot;oracle&quot;: {
+        &quot;fuel&quot;: 1.99,
+        &quot;pol&quot;: 0.080126,
+        &quot;updatedAt&quot;: 1793604622,
+        &quot;fresh&quot;: true
+    }
+}</code></pre></div>
 <div class="box built"><h2>What we built</h2><ul><li><code>FuelPriceOracle.sol</code> on Polygon Amoy (Chain ID 80002): <a href="https://amoy.polygonscan.com/address/0xf30D07696476e97103730BE0dFb55045945409D8"><code>0xf30D07696476e97103730BE0dFb55045945409D8</code></a></li><li><code>FuelToken.sol</code> on Polygon Amoy (Chain ID 80002): <a href="https://amoy.polygonscan.com/address/0x87eAE9eF4A2dD56D04b4798bA9Bc7B777E70c9ac"><code>0x87eAE9eF4A2dD56D04b4798bA9Bc7B777E70c9ac</code></a></li></ul><p>The chapter 7 program is the project backend and the chapter 8 page is its frontend. These are test-network contracts: tokens and coins have no value.</p><p><strong>Source code.</strong> The full source code is available on request.</p></div><div class="try"><h2>Try it</h2><p>Deploy only the oracle to Amoy, open its address on Polygonscan and find the "Contract" tab. Then call <code>isFresh</code> from Remix or the explorer: before the first update it must answer false.</p></div>
 <div class="learned"><h2>What you learned</h2><ul><li>Deploying gives the contracts a public address on the network.</li><li>Test keys live in an <code>.env</code> file that is never shared.</li><li>Verifying on Polygonscan makes the running code readable by everyone.</li></ul></div>
 <h2>Going deeper</h2><ul><li><a href="https://hardhat.org/docs">Hardhat: documentation</a></li><li><a href="https://docs.polygon.technology/">Polygon documentation</a></li></ul>

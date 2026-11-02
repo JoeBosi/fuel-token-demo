@@ -16,20 +16,46 @@ function median(values) {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
+// Public services expect a clear User-Agent and Accept header (some answer HTTP 403 without them).
+const HEADERS = {
+  "User-Agent": "Mozilla/5.0 (compatible; educational-demo)",
+  Accept: "application/json",
+};
+
+// Calls a JSON service with a timeout and turns failures into readable messages.
+async function getJson(url, options, label) {
+  let res;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers: { ...HEADERS, ...(options && options.headers) },
+      signal: AbortSignal.timeout(30000),
+    });
+  } catch (e) {
+    const why = e.name === "TimeoutError" ? "no answer within 30 seconds" : e.message;
+    throw new Error(label + ": cannot connect (" + why + ")");
+  }
+  if (res.status === 403) throw new Error(label + ": access refused (HTTP 403), check the User-Agent header");
+  if (res.status === 429) throw new Error(label + ": too many requests (HTTP 429), wait a minute and retry");
+  if (!res.ok) throw new Error(label + ": HTTP " + res.status);
+  return res.json();
+}
+
 async function fetchFuelPrice() {
-  const res = await fetch(ZONE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      points: [{ lat: LAT, lng: LNG }],
-      radius: 30,
-      fuelType: "1-x",
-      priceOrder: "asc",
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!res.ok) throw new Error("Osservaprezzi HTTP " + res.status);
-  const data = await res.json();
+  const data = await getJson(
+    ZONE_URL,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        points: [{ lat: LAT, lng: LNG }],
+        radius: 30,
+        fuelType: "1-x",
+        priceOrder: "asc",
+      }),
+    },
+    "Osservaprezzi"
+  );
   const prices = [];
   for (const station of data.results ?? []) {
     for (const f of station.fuels ?? []) {
@@ -37,15 +63,14 @@ async function fetchFuelPrice() {
       if (f.fuelId === 1 && f.isSelf === true && Number(f.price) > 0) prices.push(Number(f.price));
     }
   }
-  if (prices.length === 0) throw new Error("No petrol prices found");
+  if (prices.length === 0) throw new Error("Osservaprezzi: no petrol prices found around this point");
   return { eur: median(prices), stations: prices.length };
 }
 
 async function fetchPolPrice() {
   if (process.env.POL_EUR) return Number(process.env.POL_EUR); // manual override
-  const res = await fetch(COINGECKO_URL, { signal: AbortSignal.timeout(20000) });
-  if (!res.ok) throw new Error("CoinGecko HTTP " + res.status);
-  const eur = (await res.json())["polygon-ecosystem-token"]?.eur;
+  const data = await getJson(COINGECKO_URL, {}, "CoinGecko (or set POL_EUR=0.10 in .env)");
+  const eur = data["polygon-ecosystem-token"]?.eur;
   if (!(eur > 0)) throw new Error("CoinGecko: missing price");
   return eur;
 }
@@ -67,6 +92,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error(e);
+  console.error("Error: " + e.message);
   process.exitCode = 1;
 });
