@@ -6,6 +6,7 @@ import { DataIcon, OracleIcon, PumpIcon, TestIcon, TokenIcon } from '../componen
 import { btnPrimary, btnSecondary, Notice, Skeleton, TestnetBadge } from '../components/ui'
 import { useI18n } from '../i18n'
 import { formatEur } from '../lib/price'
+import { FlowDiagram } from '../components/FlowDiagram'
 
 function StepCard({ n, icon, title, body }: { n: number; icon: ReactNode; title: string; body: string }) {
   return (
@@ -41,6 +42,13 @@ export default function Home() {
                   <p className="mt-1 text-sm text-slate-700">{formatDate(price.data.date)} · {price.data.n_stations} {t('s1Stations')}</p>
                 </>
               )}
+            </div>
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-xl font-bold">{t('missionTitle')}</h2>
+              <p className="mt-2 text-lg text-slate-700">{t('missionBody')}</p>
+              <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-base font-medium text-amber-950">{t('missionHonest')}</p>
+              <p className="mt-5 text-sm font-semibold uppercase tracking-wide text-amber-800">{t('flowTitle')}</p>
+              <div className="mt-3"><FlowDiagram /></div>
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link to="/app" className={`${btnPrimary} text-lg`}>{t('s5Button')} <span aria-hidden="true">→</span></Link>
