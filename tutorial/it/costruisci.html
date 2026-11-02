@@ -82,7 +82,7 @@ web/node_modules
 web/dist</code></pre>
 
 <h2>2. I due contratti</h2>
-<!-- tryit:start --><div class="tryit"><h2>Provalo subito</h2><p>Oracolo e token in un solo file, pronti da compilare e provare nell'ambiente di prova di Remix. I passi 1, 3 e 4 si eseguono nel terminale del tuo computer (Hardhat non gira in un browser online).</p><p class="btns"><a class="btn" href="https://remix.ethereum.org/#url=https://github.com/JoeBosi/fuel-token-demo/blob/main/starter/chapters/SimpleFuel_OracleAndToken.sol&amp;lang=en&amp;optimize=true&amp;runs=200&amp;evmVersion=null" target="_blank" rel="noopener">Apri in Remix</a></p><p class="small">Remix è gratuito, funziona nel browser e non chiede account né portafoglio. Scegli la scheda «Solidity compiler», verifica che la versione sia 0.8.x e premi «Compile».</p></div><!-- tryit:end -->
+<!-- tryit:start --><div class="tryit"><h2>Provalo subito</h2><p>Oracolo e token in un solo file, pronti da compilare e provare nell'ambiente di prova di Remix. I passi 1, 3 e 4 si eseguono nel terminale del tuo computer (Hardhat non gira in un browser online).</p><p class="btns"><a class="btn" href="https://remix.ethereum.org/#url=https://github.com/JoeBosi/fuel-token-demo/blob/main/starter/chapters/SimpleFuel_OracleAndToken.sol&amp;lang=en&amp;optimize=true&amp;runs=200&amp;evmVersion=cancun&amp;version=soljson-v0.8.28+commit.7893614a.js" target="_blank" rel="noopener">Apri in Remix</a></p><p class="small">Remix è gratuito, funziona nel browser e non chiede account né portafoglio. Scegli la scheda «Solidity compiler», verifica che la versione sia 0.8.x e premi «Compile».</p><p class="small">Remix è in inglese. Se mentre la pagina si apre la console mostra in rosso &quot;Could not resolve package version&quot;, premi ancora <em>Compile</em>: la libreria OpenZeppelin viene scaricata e compare la spunta verde.</p></div><!-- tryit:end -->
 <div class="box"><strong>Analogia.</strong> L'oracolo è una lavagna in piazza su cui solo l'incaricato può scrivere il prezzo del giorno. Il token è il cambiavalute che guarda la lavagna: se la data scritta è troppo vecchia, si rifiuta di lavorare.</div>
 <h3>L'oracolo</h3>
 <p>I prezzi hanno 6 decimali: 1,989 euro al litro si scrive <code>1989000</code>, perché i contratti non conoscono i numeri con la virgola. Solo chi ha il ruolo <code>UPDATER_ROLE</code> può scrivere; <code>isFresh</code> dice se il prezzo è abbastanza recente.</p>
@@ -455,7 +455,7 @@ Is fresh: true</code></pre>
   },
   &quot;dependencies&quot;: {
     &quot;viem&quot;: &quot;^2.57.14&quot;,
-    &quot;vite&quot;: &quot;^8.3.5&quot;
+    &quot;vite&quot;: &quot;^5.4.21&quot;
   }
 }</code></pre>
 <p class="fname"><code>web/index.html</code></p>
@@ -560,7 +560,7 @@ $(&quot;buy&quot;).onclick = async () =&gt; {
 readPrice().catch((e) =&gt; { $(&quot;price&quot;).textContent = &quot;cannot read: &quot; + e.message; });</code></pre>
 <p>Installa e avvia:</p>
 <pre><code>cd web
-npm install viem vite
+npm install
 npm run dev</code></pre>
 <p>Apri l'indirizzo che Vite stampa (di solito <code>http://localhost:5173/</code>). Deve comparire il prezzo scritto al passo 5. Per comprare davvero con MetaMask, aggiungi la rete locale (nome <code>Hardhat</code>, RPC <code>http://127.0.0.1:8545</code>, Chain ID <code>31337</code>, simbolo <code>ETH</code>) e importa una chiave di prova stampata da <code>npx hardhat node</code>; la pagina chiede da sola di cambiare rete. Se hai pubblicato su Amoy, la pagina usa Amoy.</p>
 <p>Per usare la pagina con Amoy servono due cose: aver eseguito <code>deploy.js --network amoy</code> (che riscrive gli indirizzi) e aver lanciato <code>update-price.js --network amoy</code>.</p>

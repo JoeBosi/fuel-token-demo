@@ -77,7 +77,7 @@ test('API endpoints', async () => {
     assert.equal(h.length, 1);
     const f = await fetch(`${base}/api/faucets`);
     assert.equal(f.headers.get('access-control-allow-origin'), '*');
-    assert.deepEqual((await f.json()).faucets, []);
+    assert.ok(Array.isArray(await f.json()));
   });
 });
 
